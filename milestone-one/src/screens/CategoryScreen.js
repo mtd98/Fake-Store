@@ -20,11 +20,20 @@ export default function Categories({ navigation }) {
       console.log("Failed to get Data")
     }
   };
-  
+
+  const capitaliseCategories = (string) => {        
+    let words = string.split(" ");
+    for (let i = 0; i < words.length; i ++) {
+      words[i] = words[i][0].toUpperCase() + words[i].substr(1);
+    }
+    words = words.join(" ");
+    return words;
+  };
+
   const renderItem = ({ item }) => (
     <TouchableOpacity>
       <View style={styles.item}>
-        <Text style={styles.itemText}>{item}</Text>
+        <Text style={styles.itemText}>{capitaliseCategories(item)}</Text>
       </View>
     </TouchableOpacity>
   );
