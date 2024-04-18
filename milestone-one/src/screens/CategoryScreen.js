@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity} from 'react-native';
 
 const CategoryAPIURL = 'https://fakestoreapi.com/products/categories';
+const ProductAPIURL = 'https://fakestoreapi.com/products';
 
 export default function Categories({ navigation }) {
   const [categories, setCategories] = useState('');
@@ -21,6 +22,18 @@ export default function Categories({ navigation }) {
     }
   };
 
+  const getCategoryData = async (categories) => {
+    try {
+     const response = await fetch(ProductAPIURL);
+     const productData = await response.json();
+     const filterData = productData.filter(item => item.category === categories);
+     console.log(filterData)
+     return filterData;
+    } catch (error){
+      console.log("Get Category Failed")
+    }
+ };
+
   const capitaliseCategories = (string) => {        
     let words = string.split(" ");
     for (let i = 0; i < words.length; i ++) {
@@ -31,7 +44,7 @@ export default function Categories({ navigation }) {
   };
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={() => getCategoryData(item)}>
       <View style={styles.item}>
         <Text style={styles.itemText}>{capitaliseCategories(item)}</Text>
       </View>
