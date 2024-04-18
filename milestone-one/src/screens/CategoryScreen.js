@@ -27,12 +27,24 @@ export default function Categories({ navigation }) {
      const response = await fetch(ProductAPIURL);
      const productData = await response.json();
      const filterData = productData.filter(item => item.category === categories);
-     console.log(filterData)
      return filterData;
     } catch (error){
       console.log("Get Category Failed")
     }
  };
+
+  const navToProductList = async (item) =>{
+    try {
+      const filterData = await getCategoryData(item);
+      navigation.navigate('ProductList');
+    } catch (error) {
+      console.log("Nav data error");
+    }
+  };
+
+  const handleCategoryPress = (item) => {
+    navToProductList(item);
+  };
 
   const capitaliseCategories = (string) => {        
     let words = string.split(" ");
@@ -44,7 +56,7 @@ export default function Categories({ navigation }) {
   };
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity onPress={() => getCategoryData(item)}>
+    <TouchableOpacity onPress={() => handleCategoryPress(item)}>
       <View style={styles.item}>
         <Text style={styles.itemText}>{capitaliseCategories(item)}</Text>
       </View>

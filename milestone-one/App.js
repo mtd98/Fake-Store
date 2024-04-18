@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import SplashScreen from "./src/screens/SplashScreen";
 import CategoryScreen from "./src/screens/CategoryScreen";
+import ProductList from "./src/screens/ProductList";
 
 const Stack = createStackNavigator();
 
@@ -24,6 +25,7 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator initialRouteName="CategoryScreen">
           <Stack.Screen name="CategoryScreen" component={CategoryScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name="ProductList" component={ProductList} options={{ headerShown: false }}/>
         </Stack.Navigator>
       </NavigationContainer>
     );
