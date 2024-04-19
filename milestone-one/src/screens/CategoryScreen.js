@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CategoryAPIURL = 'https://fakestoreapi.com/products/categories';
 const ProductAPIURL = 'https://fakestoreapi.com/products';
@@ -24,10 +25,10 @@ export default function Categories({ navigation }) {
 
   const getCategoryData = async (categories) => {
     try {
-     const response = await fetch(ProductAPIURL);
-     const productData = await response.json();
-     const filterData = productData.filter(item => item.category === categories);
-     return filterData;
+      const response = await fetch(ProductAPIURL);
+      const productData = await response.json();
+      const filterData = productData.filter(item => item.category === categories);
+      return filterData;
     } catch (error){
       console.log("Get Category Failed")
     }
@@ -36,7 +37,7 @@ export default function Categories({ navigation }) {
   const navToProductList = async (item) =>{
     try {
       const filterData = await getCategoryData(item);
-      navigation.navigate('ProductList');
+      navigation.navigate('ProductList', {filterData});
     } catch (error) {
       console.log("Nav data error");
     }
@@ -70,7 +71,7 @@ export default function Categories({ navigation }) {
         <FlatList
         data={categories}
         renderItem={renderItem}
-        keyExtractor={(index) => index.toString()} />
+        keyExtractor={(item, index) => index.toString()} />
       </View>
       <StatusBar style="auto" />
     </View>
