@@ -1,12 +1,12 @@
 import { StyleSheet, View, Text, FlatList, Image, TouchableOpacity } from 'react-native';
 
-export default function ProductList({ route}) {
+export default function ProductList({ route, navigation}) {
   const {filterData} = route.params;
-  console.log(filterData);
+  //console.log(filterData);
 
   const renderItem = ({ item }) => (
     <View>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('ItemDetails', {item})}>
         <View>
           <Image style={styles.tinyLogo} source={{uri: item.image,}}/>
         </View>
