@@ -1,10 +1,12 @@
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, Dimensions, Platform} from 'react-native';
 import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Title } from '../components/Title';
 
 const CategoryAPIURL = 'https://fakestoreapi.com/products/categories';
 const ProductAPIURL = 'https://fakestoreapi.com/products';
+const { width } = Dimensions.get('window');
+const isWeb = Platform.OS === 'web';
 
 export default function Categories({ navigation }) {
   const [categories, setCategories] = useState('');
@@ -32,7 +34,7 @@ export default function Categories({ navigation }) {
     } catch (error){
       console.log("Get Category Failed")
     }
- };
+  };
 
   const navToProductList = async (item) =>{
     try {
@@ -66,12 +68,9 @@ export default function Categories({ navigation }) {
   
   return (
     <View style={styles.container}>
-    <Text style={styles.title}>Categories</Text>
+      <Title text={"Categories"}/>
       <View style={styles.itemBox}>
-        <FlatList
-        data={categories}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()} />
+        <FlatList data={categories} renderItem={renderItem} keyExtractor={(item, index) => index.toString()}/>
       </View>
       <StatusBar style="auto" />
     </View>
@@ -82,22 +81,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
-    paddingHorizontal: 20,
     paddingTop: 40,
-    alignContent: "center",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,
-  },
-  itemText: {
-    fontSize: 16,
-    color: '#444',
+    alignItems: "center",
   },
   itemBox: {
-    width: "95%",
+    margin: 10,
+    width: '90%',
     height: "70%",
     borderWidth: 2,
   },
@@ -111,5 +100,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 5,
     borderWidth: 3,
+  },  
+  itemText: {
+    fontSize: isWeb ? 34 : width * 0.1,
+    color: '#444',
   },
 });
