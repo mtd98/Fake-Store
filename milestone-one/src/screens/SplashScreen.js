@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: -2, height: 2 },
     textShadowRadius: 10,
     position: 'absolute',
-    //transform: [{translateY: width * 0.065}],
+    transform: [{translateY: width * 0.065}],
   },
   shoppingBags: {
     width: isWeb ? width * 1.9 : width * 1.6, 
