@@ -1,46 +1,89 @@
-import React from 'react';
-import { View, Text, StyleSheet, ImageBackground, Image } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, Image, Dimensions, Platform } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import Ionicons from "@expo/vector-icons/Ionicons";
 
-export default function SplashScreen({ navigation }) {
+const { width, height } = Dimensions.get('window');
+const isWeb = Platform.OS === 'web';
+
+export default function SplashScreen() {
+  const iconSize = width * 0.55;
   return (
     <ImageBackground source={require('../img/Background.jpeg')} style={styles.background}>
-    <View style={styles.container}>
-      <View style={styles.logoContainer}>
-        <Text style={styles.logoText}>Fake Store</Text>
-        <Image source={require('../img/ShoppingBag.png')} style={styles.shoppingBags} />
+      <View style={styles.container}>
+        <View style={styles.contentContainer}>
+          <View style={styles.logoContent}>
+            <Image source={require('../img/ShoppingBag.png')} style={styles.shoppingBags} />
+            <Text style={styles.logoText} numberOfLines={1}>Fake Store</Text>
+          </View>
+          <View style={styles.iconContent}>
+            <Ionicons name="card-outline" color="white" size={isWeb ? 80 : iconSize} style={styles.icon}/>
+            <Ionicons name="cart-outline" color="white" size={isWeb ? 80 : iconSize} style={styles.icon}/>
+            <Ionicons name="gift-outline" color="white" size={isWeb ? 80 : iconSize} style={styles.icon}/>
+          </View>
+        </View>
       </View>
-    </View>
-  </ImageBackground>
+      <StatusBar style='auto'/>
+    </ImageBackground>
   );
-}
+};
 
 const styles = StyleSheet.create({
   background: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    width: '100%',
+    height: '100%',
   },
   container: {
     alignItems: 'center',
+    width: '100%',
+    height: '100%',
   },
-  logoContainer: {
+  contentContainer: {
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'column',
+    paddingVertical: height * 0.05,
+    paddingHorizontal: width * 0.05,
+    borderRadius: 10,
+    maxWidth: '80%',
+  },
+  logoContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  iconContent: {
+    padding: 10,
     flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
   },
   logoText: {
-    fontSize: 40,
+    fontSize: isWeb ? 34 : width * 0.1,
     fontWeight: 'bold',
     color: 'white',
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    textShadowOffset: { width: -1, height: 1 },
+    textShadowOffset: { width: -2, height: 2 },
     textShadowRadius: 10,
+    position: 'absolute',
+    //transform: [{translateY: width * 0.065}],
   },
   shoppingBags: {
-    width: '30%', 
-    height: undefined, 
+    width: isWeb ? width * 1.9 : width * 1.6, 
+    height: undefined,
+    marginLeft: 60,
     aspectRatio: 1,
     resizeMode: 'contain',
   },
+  icon: {
+    backgroundColor: '#F6964E',
+    margin: 5,
+    borderRadius: 1,
+    borderColor: "black",
+    borderWidth: 5,
+  }
 });
 
