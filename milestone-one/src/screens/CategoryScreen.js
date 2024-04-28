@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, FlatList, TouchableOpacity, Dimensions, Platfor
 import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Title } from '../components/Title';
+import { backgroundColour, borderColour, mainComponentColour, textColour } from '../constants/Color';
 
 const CategoryAPIURL = 'https://fakestoreapi.com/products/categories';
 const ProductAPIURL = 'https://fakestoreapi.com/products';
@@ -89,7 +90,7 @@ export default function Categories({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: backgroundColour,
     paddingTop: 40,
     alignItems: "center",
   },
@@ -98,9 +99,10 @@ const styles = StyleSheet.create({
     width: '90%',
     height: "70%",
     borderWidth: 2,
+    borderColor: borderColour,
   },
   item: {
-    backgroundColor: '#f9c2ff',
+    backgroundColor: mainComponentColour,
     padding: 20,
     marginVertical: 8,
     marginHorizontal: 16,
@@ -112,6 +114,6 @@ const styles = StyleSheet.create({
   },  
   itemText: {
     fontSize: isWeb ? 34 : width * 0.1,
-    color: '#444',
+    color: textColour,
   },
 });

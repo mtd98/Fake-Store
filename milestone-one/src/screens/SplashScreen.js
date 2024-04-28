@@ -15,11 +15,6 @@ export default function SplashScreen() {
             <Image source={require('../img/ShoppingBag.png')} style={styles.shoppingBags} />
             <Text style={styles.logoText} numberOfLines={1}>Fake Store</Text>
           </View>
-          <View style={styles.iconContent}>
-            <Ionicons name="card-outline" color="white" size={isWeb ? 80 : iconSize} style={styles.icon}/>
-            <Ionicons name="cart-outline" color="white" size={isWeb ? 80 : iconSize} style={styles.icon}/>
-            <Ionicons name="gift-outline" color="white" size={isWeb ? 80 : iconSize} style={styles.icon}/>
-          </View>
         </View>
       </View>
       <StatusBar style='auto'/>

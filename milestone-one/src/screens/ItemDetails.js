@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { IconButton } from '../components/IconButton';
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useEffect, useState } from 'react';
+import { backgroundColour } from '../constants/Color';
 const { width, height } = Dimensions.get('window');
 
 export default function ItemDetails({ route, navigation }) {
@@ -28,7 +29,7 @@ export default function ItemDetails({ route, navigation }) {
         <Image style={styles.image} source={{uri: item.image,}}/>
         <Text style={styles.title}>{item.title}</Text>
         <View style={styles.ratingContainer}>
-          <Ionicons name="star-outline" color="white" size={20}/>  
+          <Ionicons name="star-outline" color="yellow" size={20}/>  
           <Text style={styles.rating}>{item.rating.rate}</Text>
           <Text>Sold: ({item.rating.count})</Text>
         </View>
@@ -53,7 +54,7 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     alignItems: "center",
-    backgroundColor: '#F0F0F0',
+    backgroundColor: backgroundColour,
     borderRadius: 10,
     padding: 20,
     marginBottom: 20,

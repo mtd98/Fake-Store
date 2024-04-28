@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Title } from '../components/Title';
 import { IconButton } from '../components/IconButton';
 import { useEffect, useState } from 'react';
+import { backgroundColour, borderColour, mainComponentColour, secondaryTextColour } from '../constants/Color';
 
 const {width, height } = Dimensions.get("window");
 const isWeb = Platform.OS === 'web';
@@ -52,7 +53,7 @@ export default function ProductList({ route, navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: backgroundColour,
     paddingTop: 40,
     alignItems: "center",
   },
@@ -61,12 +62,13 @@ const styles = StyleSheet.create({
     width: '90%',
     height: height * 0.6,
     borderWidth: 2,
+    borderColor: borderColour,
   },
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: mainComponentColour,
     borderRadius: 10,
     padding: 10,
   },
@@ -90,7 +92,7 @@ const styles = StyleSheet.create({
   },
   price: {
     fontSize: 14,
-    color: '#888',
+    color: secondaryTextColour,
   },
 });
 

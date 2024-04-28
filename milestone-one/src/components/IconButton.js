@@ -1,9 +1,9 @@
 import { View, StyleSheet, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { buttonColour } from "../constants/Color";
 
 export const IconButton =({
   name,
-  color,
   fun = () => {
   },
 }) => {
@@ -26,5 +26,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     alignItems: "center",
     margin: 10,
+    backgroundColor: buttonColour,
   },
 })
