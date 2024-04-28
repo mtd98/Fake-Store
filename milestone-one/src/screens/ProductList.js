@@ -1,13 +1,23 @@
-import { StyleSheet, View, Text, FlatList, Image, TouchableOpacity, Dimensions, Platform } from 'react-native';
+import { StyleSheet, View, Text, FlatList, Image, TouchableOpacity, Dimensions, Platform, ActivityIndicator } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Title } from '../components/Title';
 import { IconButton } from '../components/IconButton';
+import { useEffect, useState } from 'react';
 
 const {width, height } = Dimensions.get("window");
 const isWeb = Platform.OS === 'web';
 
 export default function ProductList({ route, navigation}) {
   const {filterData} = route.params;
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setData(filterData);
+      setLoading(false);
+    }, 2000);
+  }, [filterData]);
 
   const navGoBack = () => navigation.goBack();
 
@@ -27,7 +37,11 @@ export default function ProductList({ route, navigation}) {
     <View style={styles.container}>
       <Title text={"List of Filtered Products"}/>
       <View style={styles.itemBox}>
-        <FlatList data={filterData} renderItem={renderItem} keyExtractor={(item) => item.id.toString()}/>
+        {loading ? (
+          <ActivityIndicator size="large" color="#0000ff"/>
+        ) : (
+          <FlatList data={data} renderItem={renderItem} keyExtractor={(item) => item.id.toString()}/>
+        )}
       </View>
       <IconButton name="backspace-outline" fun={navGoBack}/>
       <StatusBar style='auto'/>

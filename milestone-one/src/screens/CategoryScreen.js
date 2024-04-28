@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, Dimensions, Platform} from 'react-native';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, Dimensions, Platform, ActivityIndicator} from 'react-native';
 import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Title } from '../components/Title';
@@ -9,6 +9,7 @@ const { width } = Dimensions.get('window');
 const isWeb = Platform.OS === 'web';
 
 export default function Categories({ navigation }) {
+  const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState('');
 
   useEffect(() => {
@@ -19,9 +20,13 @@ export default function Categories({ navigation }) {
     try {
       const getCategory = await fetch(CategoryAPIURL);
       const categoryJSON = await getCategory.json();
-      setCategories(categoryJSON);
+      setTimeout(() => {
+        setCategories(categoryJSON);
+        setLoading(false);
+      }, 2000); 
     } catch (error) {
       console.log("Failed to get Data")
+      setLoading(false);
     }
   };
 
@@ -70,7 +75,11 @@ export default function Categories({ navigation }) {
     <View style={styles.container}>
       <Title text={"Categories"}/>
       <View style={styles.itemBox}>
-        <FlatList data={categories} renderItem={renderItem} keyExtractor={(item, index) => index.toString()}/>
+        {loading ? ( 
+          <ActivityIndicator size="large" color="#0000ff"/>
+        ) : (
+          <FlatList data={categories} renderItem={renderItem} keyExtractor={(item, index) => index.toString()}/>
+        )}
       </View>
       <StatusBar style="auto" />
     </View>

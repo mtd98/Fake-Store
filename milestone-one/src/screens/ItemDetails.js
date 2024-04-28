@@ -1,23 +1,36 @@
-import { StyleSheet, View, Text, Button, Image, Dimensions, Platform } from 'react-native';
+import { StyleSheet, View, Text, Button, Image, Dimensions, Platform, ActivityIndicator} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { IconButton } from '../components/IconButton';
 import Ionicons from "@expo/vector-icons/Ionicons";
-
+import { useEffect, useState } from 'react';
 const { width, height } = Dimensions.get('window');
 
 export default function ItemDetails({ route, navigation }) {
   const {item} = route.params;
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setData(item);
+      setLoading(false);
+    }, 2000);
+  }, [item]);
+
   const navGoBack = () => navigation.goBack();
 
   return (
     <View style={styles.container}>
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : ( 
       <View style={styles.itemContainer}>
         <Image style={styles.image} source={{uri: item.image,}}/>
         <Text style={styles.title}>{item.title}</Text>
         <View style={styles.ratingContainer}>
           <Ionicons name="star-outline" color="white" size={20}/>  
           <Text style={styles.rating}>{item.rating.rate}</Text>
-          <Text>Ratings: ({item.rating.count})</Text>
+          <Text>Sold: ({item.rating.count})</Text>
         </View>
         <Text style={styles.price}>Price: ${item.price}</Text>
         <View style={styles.buttonContainer}>
@@ -25,7 +38,8 @@ export default function ItemDetails({ route, navigation }) {
           <IconButton name="cart-outline"/>
         </View>
         <Text style={styles.description}>{item.description}</Text>
-      </View>
+      </View> 
+      )}
       <StatusBar style='auto'/>
     </View>
   );
