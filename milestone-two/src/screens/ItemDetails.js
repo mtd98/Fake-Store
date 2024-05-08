@@ -19,7 +19,7 @@ function ItemDetails({ route, navigation, addToCart }) {
     setTimeout(() => {
       setData(item);
       setLoading(false);
-    }, 2000);
+    }, 1000);
   }, [item]);
 
   const navGoBack = () => navigation.goBack();
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   image: {
-    width: width * 0.5,
+    width: width * 0.3,
     aspectRatio: 1, 
     borderRadius: 10,
     marginBottom: 10,
