@@ -9,6 +9,7 @@ const ADD_TO_CART = 'ADD_TO_CART';
 const UPDATE_CART_ITEM_QUANTITY = 'UPDATE_CART_ITEM_QUANTITY';
 const INCREMENT_QUANTITY = 'INCREMENT_QUANTITY';
 const DECREMENT_QUANTITY = 'DECREMENT_QUANTITY';
+const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
 
 export const addToCart = (item, quantity = 1) => ({
   type: ADD_TO_CART,
@@ -27,6 +28,11 @@ export const incrementQuantity = (itemId) => ({
 
 export const decrementQuantity = (itemId) => ({
   type: DECREMENT_QUANTITY,
+  payload: itemId,
+});
+
+export const removeFromCart = (itemId) => ({ 
+  type: REMOVE_FROM_CART,
   payload: itemId,
 });
 
@@ -80,11 +86,11 @@ const reducer = (state = initialState, action) => {
       };
 
     case DECREMENT_QUANTITY:
+      const updatedCartItems = state.cartItems.map(item =>
+        item.id === action.payload ? { ...item, quantity: item.quantity - 1 } : item).filter(item => item.quantity > 0);  
       return {
         ...state,
-        cartItems: state.cartItems.map(item =>
-          item.id === action.payload && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
-        ),
+        cartItems: updatedCartItems,
         totalItems: state.totalItems > 0 ? state.totalItems - 1 : 0,
       };
       
