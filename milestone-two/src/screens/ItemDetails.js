@@ -1,12 +1,16 @@
-import { StyleSheet, View, Text, Button, Image, Dimensions, Platform, ActivityIndicator} from 'react-native';
-import { StatusBar } from 'expo-status-bar';
-import { IconButton } from '../components/IconButton';
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, Image, Dimensions, Platform, ActivityIndicator} from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { connect } from 'react-redux';
+import Ionicons from "@expo/vector-icons/Ionicons";
+
+import { addToCart } from '../components/Store';
+import { IconButton } from '../components/IconButton';
 import { backgroundColour } from '../constants/Color';
+
 const { width, height } = Dimensions.get('window');
 
-export default function ItemDetails({ route, navigation }) {
+function ItemDetails({ route, navigation, addToCart }) {
   const {item} = route.params;
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
@@ -19,6 +23,10 @@ export default function ItemDetails({ route, navigation }) {
   }, [item]);
 
   const navGoBack = () => navigation.goBack();
+
+  const handleAddToCart = () => {
+    addToCart(item);
+  }
 
   return (
     <View style={styles.container}>
@@ -36,7 +44,7 @@ export default function ItemDetails({ route, navigation }) {
         <Text style={styles.price}>Price: ${item.price}</Text>
         <View style={styles.buttonContainer}>
           <IconButton name="backspace-outline" fun={navGoBack}/>
-          <IconButton name="cart-outline"/>
+          <IconButton name="cart-outline" fun={handleAddToCart}/>
         </View>
         <Text style={styles.description}>{item.description}</Text>
       </View> 
@@ -93,3 +101,4 @@ const styles = StyleSheet.create({
   },
 });
 
+export default connect(null, { addToCart })(ItemDetails);

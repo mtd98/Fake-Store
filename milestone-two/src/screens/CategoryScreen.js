@@ -24,7 +24,7 @@ export default function Categories({ navigation }) {
       setTimeout(() => {
         setCategories(categoryJSON);
         setLoading(false);
-      }, 2000); 
+      }, 1000); 
     } catch (error) {
       console.log("Failed to get Data")
       setLoading(false);

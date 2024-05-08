@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Provider } from "react-redux";
+
 
 import SplashScreen from "./src/screens/SplashScreen";
 import CategoryScreen from "./src/screens/CategoryScreen";
@@ -10,6 +12,7 @@ import ItemDetails from "./src/screens/ItemDetails";
 import ShoppingCart from "./src/screens/ShoppingCart";
 
 import { Icon } from './src/components/Icon';
+import store from './src/components/Store';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -17,7 +20,7 @@ const Stack = createStackNavigator();
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
   const cartItemCount = 1;
-  
+
   const Products = () => (
     <Stack.Navigator initialRouteName="CategoryScreen">
       <Stack.Screen name="CategoryScreen" component={CategoryScreen} options={{ headerShown: false }}/>
@@ -27,36 +30,38 @@ export default function App() {
   );
 
   const MyTabNavigator = () => (
-    <Tab.Navigator 
-      tabBarOptions={{
-        activeTintColor: 'blue', 
-        inactiveTintColor: 'gray',
-        style: {
-          backgroundColor: 'white',
-        },
-        labelStyle: {
-          fontSize: 16,
-        },
-      }}
-    >
-      <Tab.Screen name="Products" component={Products} 
-        options={{ 
-          headerShown: false, 
-          tabBarIcon: () => (
-            <Icon name="backspace-outline"/>
-          ),
+    <Provider store={store}>
+      <Tab.Navigator 
+        tabBarOptions={{
+          activeTintColor: 'blue', 
+          inactiveTintColor: 'gray',
+          style: {
+            backgroundColor: 'white',
+          },
+          labelStyle: {
+            fontSize: 16,
+          },
         }}
-      />
-      <Tab.Screen name="My Cart" component={ShoppingCart} 
-        options={{ 
-          headerShown: false,
-          tabBarBadge: cartItemCount > 0 ? `${cartItemCount}` : null,
-          tabBarIcon: () => (
-            <Icon name="cart-outline" fun={() => navigation.navigate('My Cart')} />
-          ),
-        }}
-      />
-    </Tab.Navigator>
+      >
+        <Tab.Screen name="Products" component={Products} 
+          options={{ 
+            headerShown: false, 
+            tabBarIcon: () => (
+              <Icon name="backspace-outline"/>
+            ),
+          }}
+        />
+        <Tab.Screen name="My Cart" component={ShoppingCart} 
+          options={{ 
+            headerShown: false,
+            tabBarBadge: cartItemCount > 0 ? `${cartItemCount}` : null,
+            tabBarIcon: () => (
+              <Icon name="cart-outline" fun={() => navigation.navigate(ShoppingCart)} />
+            ),
+          }}
+        />
+      </Tab.Navigator>
+    </Provider>
   );
 
   useEffect(() => {
