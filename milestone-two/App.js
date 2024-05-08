@@ -16,7 +16,8 @@ const Stack = createStackNavigator();
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
-
+  const cartItemCount = 1;
+  
   const Products = () => (
     <Stack.Navigator initialRouteName="CategoryScreen">
       <Stack.Screen name="CategoryScreen" component={CategoryScreen} options={{ headerShown: false }}/>
@@ -49,6 +50,7 @@ export default function App() {
       <Tab.Screen name="My Cart" component={ShoppingCart} 
         options={{ 
           headerShown: false,
+          tabBarBadge: cartItemCount > 0 ? `${cartItemCount}` : null,
           tabBarIcon: () => (
             <Icon name="cart-outline" fun={() => navigation.navigate('My Cart')} />
           ),
