@@ -1,10 +1,11 @@
 import { StyleSheet, Text, View, FlatList, Button, Image, Dimensions, } from 'react-native';
-import { connect } from 'react-redux';
+import { connect , useDispatch } from 'react-redux';
 import store from '../components/Store';
 
 const { width, height } = Dimensions.get('window');
 
 function ShoppingCart ({cartItems}) {
+  const dispatch = useDispatch();
   store.subscribe(() => {
     const state = store.getState(); 
     console.log('Total items in cart:', state.cart.totalItems);
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
   image: {
     width: 100,
     height: 100,
-    resizeMode: 'cover',
+    //props.resizeMode: 'cover',
     marginRight: 10,
     borderRadius: 5,
   },

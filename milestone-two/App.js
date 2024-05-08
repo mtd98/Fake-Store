@@ -29,7 +29,7 @@ const MyTabNavigator = () => {
   
   return ( 
     <Tab.Navigator 
-      tabBarOptions={{
+      screenOptions={{
         activeTintColor: 'blue', 
         inactiveTintColor: 'gray',
         style: {
@@ -56,6 +56,8 @@ const MyTabNavigator = () => {
             <Icon name="cart-outline" />
           ),
         }}
+        lazy={true}
+        unmountOnBlur={true}
       />
     </Tab.Navigator>
   );
