@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { connect } from 'react-redux';
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import { addToCart } from '../components/Store';
+import { addToCart, updateTotalCartPrice } from '../components/Store';
 import { IconButton } from '../components/IconButton';
 import { backgroundColour } from '../constants/Color';
 

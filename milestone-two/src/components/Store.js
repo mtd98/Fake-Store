@@ -3,6 +3,7 @@ import { configureStore } from '@reduxjs/toolkit';
 const initialState = {
   cartItems: [],
   totalItems: 0,
+  totalPrice: 0,
 };
 
 const ADD_TO_CART = 'ADD_TO_CART';
@@ -13,7 +14,7 @@ const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
 
 export const addToCart = (item, quantity = 1) => ({
   type: ADD_TO_CART,
-  payload: { ...item, quantity}
+  payload: { ...item, quantity, totalPrice: item.price * quantity},
 });
 
 export const updateCartItemQuantity = (itemId, quantity) => ({
@@ -45,25 +46,32 @@ const reducer = (state = initialState, action) => {
           if (index === existingItemIndex) {
             return {
               ...item,
-              quantity: item.quantity + action.payload.quantity
+              quantity: item.quantity + action.payload.quantity,
+              totalPrice: (item.quantity + action.payload.quantity) * item.price
             };
           }
         return item;
       });
-      
       const totalQuantity = updatedCartItems.reduce((total, item) => total + item.quantity, 0);
+      const totalPrice = updateCartItems.reduce((total, item) => total + item.totalPrice, 0);
+      console.log(totalPrice)
       return {
         ...state,
         cartItems: updatedCartItems,
         totalItems: totalQuantity,
+        totalPrice: totalPrice,
       };
     } else {
       const updatedCartItems = [...state.cartItems, action.payload];
       const totalQuantity = updatedCartItems.reduce((total, item) => total + item.quantity, 0);
+      const totalPrice = updatedCartItems.reduce((total, item) => total + item.totalPrice, 0);
+      console.log(totalPrice)
       return {
         ...state,
         cartItems: updatedCartItems,
         totalItems: totalQuantity,
+        totalPrice: totalPrice,
+        
       };
     }
 
@@ -93,7 +101,15 @@ const reducer = (state = initialState, action) => {
         cartItems: updatedCartItems,
         totalItems: state.totalItems > 0 ? state.totalItems - 1 : 0,
       };
-      
+
+    /*case UPDATE_TOTAL_CART_PRICE:
+      console.log('Updating total cart price');
+      const totalCartPrice = state.cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+      return {
+        ...state,
+        totalCartPrice,
+      };*/
+
     default:
       return state;
   };

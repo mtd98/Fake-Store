@@ -8,9 +8,11 @@ function ShoppingCart ({cartItems}) {
   const dispatch = useDispatch();
   store.subscribe(() => {
     const state = store.getState(); 
-    console.log('Total items in cart:', state.cart.totalItems);
   });
-  
+
+  const totalPrice = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+  const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
+
   const renderItem = ({ item }) => (
     <View style={styles.itemContainer}>
       <Image style={styles.image} source={{uri: item.image,}}/>
@@ -29,7 +31,6 @@ function ShoppingCart ({cartItems}) {
     </View>
   );
 
-
   return (
     <View style={styles.container}>
     {cartItems.length === 0 ? (
@@ -37,6 +38,8 @@ function ShoppingCart ({cartItems}) {
     ):(
       <View>
         <Text style={styles.cartHeaderText}>Cart Items</Text>
+        <Text style={styles.cartHeaderText}>Cart Total Price: ${totalPrice}</Text>
+        <Text style={styles.cartHeaderText}>Item Total:{totalItems}</Text>
         <FlatList 
           data={cartItems}
           renderItem={renderItem} 
@@ -113,5 +116,6 @@ const styles = StyleSheet.create({
     width: 10,
   }
 });
+
 export default connect(mapStateToProps)(ShoppingCart);
 
