@@ -24,7 +24,7 @@ export default function Categories({ navigation }) {
       setTimeout(() => {
         setCategories(categoryJSON);
         setLoading(false);
-      }, 1000); 
+      }, 2000); 
     } catch (error) {
       console.log("Failed to get Data")
       setLoading(false);
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   itemBox: {
     margin: 10,
     width: '90%',
-    height: "70%",
+    height: "75%",
     borderWidth: 2,
     borderColor: borderColour,
   },
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     borderWidth: 3,
   },  
   itemText: {
-    fontSize: isWeb ? 34 : width * 0.1,
+    fontSize: isWeb ? 34 : width * 0.07,
     color: textColour,
   },
 });

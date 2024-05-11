@@ -1,8 +1,9 @@
+import { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, FlatList, Image, TouchableOpacity, Dimensions, Platform, ActivityIndicator } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+
 import { Title } from '../components/Title';
 import { IconButton } from '../components/IconButton';
-import { useEffect, useState } from 'react';
 import { backgroundColour, borderColour, mainComponentColour, secondaryTextColour } from '../constants/Color';
 
 const {width, height } = Dimensions.get("window");
@@ -27,7 +28,7 @@ export default function ProductList({ route, navigation}) {
       <View style={styles.itemContainer}>
         <Image style={styles.image} source={{uri: item.image,}}/>
         <View style={styles.titleContainer}>
-          <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
+          <Text style={styles.title} numberOfLines={4}>{item.title}</Text>
           <Text style={styles.price}>Price: ${item.price}</Text>
         </View>
       </View>
@@ -44,7 +45,7 @@ export default function ProductList({ route, navigation}) {
           <FlatList data={data} renderItem={renderItem} keyExtractor={(item) => item.id.toString()}/>
         )}
       </View>
-      <IconButton name="backspace-outline" fun={navGoBack}/>
+      <IconButton name="backspace-outline" fun={navGoBack} text="Go Back"/>
       <StatusBar style='auto'/>
     </View>
   );
@@ -60,7 +61,7 @@ const styles = StyleSheet.create({
   itemBox: {
     margin: 10,
     width: '90%',
-    height: height * 0.6,
+    height: '70%',
     borderWidth: 2,
     borderColor: borderColour,
   },
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   image: {
-    width: width * 0.1,
+    width: isWeb ? 150 : width * 0.2,
     aspectRatio: 1,
     borderRadius: 10,
     marginRight: 10,
@@ -83,15 +84,15 @@ const styles = StyleSheet.create({
     width: width * 0.6,
   },
   title: {
-    fontSize: 16,
+    fontSize: isWeb ? 24 : width * 0.045,
     fontWeight: 'bold',
-    marginBottom: 5,
-    flexShrink: 1,
-    flexWrap: 'wrap',
-    lineHeight: 20,
+    marginBottom: 10,
+    //flexShrink: 1,
+    //flexWrap: 'wrap',
+    //lineHeight: 20,
   },
   price: {
-    fontSize: 14,
+    fontSize: isWeb ? 32 : width * 0.045,
     color: secondaryTextColour,
   },
 });

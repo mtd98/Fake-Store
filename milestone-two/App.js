@@ -61,7 +61,7 @@ const MyTabNavigator = () => {
         options={{ 
           headerShown: false, 
           tabBarIcon: () => (
-            <Icon name="backspace-outline" fun={handlePress}/>
+            <Icon name="basket-outline" fun={handlePress}/>
           ),
         }}
       />

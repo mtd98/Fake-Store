@@ -1,8 +1,12 @@
-import { StyleSheet, Text, View, FlatList, Button, Image, Dimensions, } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Button, Image, Dimensions, Platform } from 'react-native';
 import { connect , useDispatch } from 'react-redux';
+
 import store from '../components/Store';
+import { Title } from '../components/Title';
+import { backgroundColour, borderColour } from '../constants/Color';
 
 const { width, height } = Dimensions.get('window');
+const isWeb = Platform.OS === 'web';
 
 function ShoppingCart ({cartItems}) {
   const dispatch = useDispatch();
@@ -14,14 +18,15 @@ function ShoppingCart ({cartItems}) {
   const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   const renderItem = ({ item }) => (
-    <View style={styles.itemContainer}>
+    <View style={styles.listContainer}>
       <Image style={styles.image} source={{uri: item.image,}}/>
       <View style={styles.itemDetails}>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.price}>Price: ${item.price}</Text>
+        <Text style={styles.quantity}>Quantity: {item.quantity}</Text>
       </View>
       <View style={styles.quantityContainer}>
-        <Text style={styles.quantity}>Quantity: {item.quantity}</Text>
+        
         <View style={styles.buttonContainer}>
           <Button title="+" onPress={() => dispatch({ type: 'INCREMENT_QUANTITY', payload: item.id })} />
           <View style={styles.buttonSpace} />
@@ -33,21 +38,21 @@ function ShoppingCart ({cartItems}) {
 
   return (
     <View style={styles.container}>
-    {cartItems.length === 0 ? (
-      <Text style={styles.emptyText}>Cart Empty</Text>
-    ):(
-      <View>
-        <Text style={styles.cartHeaderText}>Cart Items</Text>
-        <Text style={styles.cartHeaderText}>Cart Total Price: ${totalPrice}</Text>
-        <Text style={styles.cartHeaderText}>Item Total:{totalItems}</Text>
-        <FlatList 
-          data={cartItems}
-          renderItem={renderItem} 
-          keyExtractor={(item, index) => index.toString()}
-        />
+      <Title text={"Cart"}/>
+        {cartItems.length === 0 ? (
+          <Text style={styles.emptyText}>Your shopping cart is empty</Text>
+        ):(
+          <View style={styles.itemContainer}>
+            <Text style={styles.cartHeaderText}>Cart Total Price: ${totalPrice.toFixed(2)}</Text>
+            <Text style={styles.cartHeaderText}>Item Total:{totalItems}</Text>
+            <FlatList 
+              data={cartItems}
+              renderItem={renderItem} 
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </View>
+        )}
       </View>
-    )}
-    </View>
   );
 }
 
@@ -61,31 +66,40 @@ const mapStateToProps = (state) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: backgroundColour,
+    paddingTop: 40,
+    alignItems: "center",
+  },
+  itemContainer: {
+    margin: 10,
+    height: '75%',
+    width: '90%',
+    borderWidth: 2,
+    borderColor: borderColour,
+    padding: 10,
   },
   emptyText: {
-    fontSize: 20,
+    textAlign: 'center',
+    fontSize: isWeb ? 34 : width * 0.07,
+    marginTop: isWeb ? 34 : width * 0.07,
     textAlign: 'center',
   },
   cartHeaderText: {
-    fontSize: 24,
+    fontSize: isWeb ? 34 : width * 0.07,
     fontWeight: 'bold',
     marginBottom: 10,
   },
-  itemContainer: {
+  listContainer: {
     backgroundColor: '#fff',
     padding: 10,
-    marginBottom: 10,
     borderRadius: 5,
-    elevation: 3,
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 10,
   },
   image: {
-    width: 100,
-    height: 100,
-    //props.resizeMode: 'cover',
+    width: isWeb ? 170 : width * 0.15,
+    aspectRatio: 1,
     marginRight: 10,
     borderRadius: 5,
   },
@@ -93,11 +107,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 18,
+    fontSize: isWeb ? 34 : width * 0.035,
     fontWeight: 'bold',
   },
   price: {
-    fontSize: 16,
+    fontSize: isWeb ? 25 : width * 0.035,
     color: '#888',
   },
   quantityContainer: {
@@ -105,7 +119,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   quantity: {
-    fontSize: 16,
+    fontSize: isWeb ? 25 : width * 0.035,
+    flexDirection: isWeb ? 'row' : 'column',
     marginRight: 10,
   },
   buttonContainer: {
