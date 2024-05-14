@@ -28,6 +28,13 @@ const Products = () => (
   </Stack.Navigator>
 );
 
+const Profile = () => (
+  <Stack.Navigator initialRouteName='SignInScreen'>
+    <Stack.Screen name="SignInScreen" component={SignInScreen} options={{ headerShown: false }}/>
+    <Stack.Screen name="SignUpScreen" component={SignUpScreen} options={{ headerShown: false }}/>
+  </Stack.Navigator>
+);
+
 const MyTabNavigator = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -88,7 +95,7 @@ const MyTabNavigator = () => {
         lazy={true}
         unmountOnBlur={true}
       />
-      <Tab.Screen name="User Profile" component={isLoggedIn ? ProfileScreen: SignInScreen} 
+      <Tab.Screen name="User Profile" component={isLoggedIn ? ProfileScreen: Profile} 
         options={{ 
           headerShown: false,
           tabBarIcon: () => (

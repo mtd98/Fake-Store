@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
-export default function LoginPage({}){
+export default function LoginPage({ navigation }){
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -15,7 +15,7 @@ export default function LoginPage({}){
   };
 
   const navToSignup = () => {
-    
+    navigation.navigate('SignUpScreen');
   };
 
   return (
