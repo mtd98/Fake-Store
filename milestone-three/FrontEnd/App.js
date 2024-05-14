@@ -9,29 +9,16 @@ import CategoryScreen from "./src/screens/CategoryScreen";
 import ProductList from "./src/screens/ProductList";
 import ItemDetails from "./src/screens/ItemDetails";
 import ShoppingCart from "./src/screens/ShoppingCart";
+import OrderScreen from "./src/screens/OrderScreen";
+import SignUpScreen from "./src/screens/SignUpScreen";
+import SignInScreen from "./src/screens/SignInScreen";
+import ProfileScreen from "./src/screens/ProfileScreen"
 
 import { Icon } from './src/components/Icon';
 import store from './src/components/Store';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
-
-let lastPressTime = 0;
-
-// Function to handle button press
-const handlePress = () => {
-  const currentTime = new Date().getTime();
-  // Check if the difference between current time and last press time is less than 500ms (adjust as needed)
-  if (currentTime - lastPressTime < 500) {
-    // Button was pressed too quickly, ignore this press
-    return;
-  }
-  // Update last press time
-  lastPressTime = currentTime;
-  
-  // Your button press logic goes here
-  console.log('Tab button pressed');
-};
 
 const Products = () => (
   <Stack.Navigator initialRouteName="CategoryScreen">
@@ -43,7 +30,7 @@ const Products = () => (
 
 const MyTabNavigator = () => {
   const totalItems = useSelector(state => state.cart.totalItems);
-  
+  const totalOrders = 1;
   return ( 
     <Tab.Navigator 
       screenOptions={{
@@ -61,16 +48,37 @@ const MyTabNavigator = () => {
         options={{ 
           headerShown: false, 
           tabBarIcon: () => (
-            <Icon name="basket-outline" fun={handlePress}/>
+            <Icon name="basket-outline" />
           ),
         }}
       />
-      <Tab.Screen name="Cart" component={ShoppingCart} 
+      <Tab.Screen name="My Cart" component={ShoppingCart} 
         options={{ 
           headerShown: false,
           tabBarBadge: totalItems > 0 ? `${totalItems}` : null,
           tabBarIcon: () => (
-            <Icon name="cart-outline" fun={handlePress}/>
+            <Icon name="cart-outline" />
+          ),
+        }}
+        lazy={true}
+        unmountOnBlur={true}
+      />
+      <Tab.Screen name="My Orders" component={OrderScreen} 
+        options={{ 
+          headerShown: false,
+          tabBarBadge: totalOrders > 0 ? `${totalOrders}` : null,
+          tabBarIcon: () => (
+            <Icon name="gift-outline" />
+          ),
+        }}
+        lazy={true}
+        unmountOnBlur={true}
+      />
+      <Tab.Screen name="User Profile" component={ProfileScreen} 
+        options={{ 
+          headerShown: false,
+          tabBarIcon: () => (
+            <Icon name="person-outline" />
           ),
         }}
         lazy={true}
