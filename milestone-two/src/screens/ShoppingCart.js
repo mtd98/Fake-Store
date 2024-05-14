@@ -57,7 +57,6 @@ function ShoppingCart ({cartItems}) {
 }
 
 const mapStateToProps = (state) => {
-  //console.log('Redux state', state);
   return {
     cartItems: state.cart.cartItems,
   }

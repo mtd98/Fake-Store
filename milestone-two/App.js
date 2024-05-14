@@ -16,23 +16,6 @@ import store from './src/components/Store';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-let lastPressTime = 0;
-
-// Function to handle button press
-const handlePress = () => {
-  const currentTime = new Date().getTime();
-  // Check if the difference between current time and last press time is less than 500ms (adjust as needed)
-  if (currentTime - lastPressTime < 500) {
-    // Button was pressed too quickly, ignore this press
-    return;
-  }
-  // Update last press time
-  lastPressTime = currentTime;
-  
-  // Your button press logic goes here
-  console.log('Tab button pressed');
-};
-
 const Products = () => (
   <Stack.Navigator initialRouteName="CategoryScreen">
     <Stack.Screen name="CategoryScreen" component={CategoryScreen} options={{ headerShown: false }}/>
@@ -61,7 +44,7 @@ const MyTabNavigator = () => {
         options={{ 
           headerShown: false, 
           tabBarIcon: () => (
-            <Icon name="basket-outline" fun={handlePress}/>
+            <Icon name="basket-outline" />
           ),
         }}
       />
@@ -70,7 +53,7 @@ const MyTabNavigator = () => {
           headerShown: false,
           tabBarBadge: totalItems > 0 ? `${totalItems}` : null,
           tabBarIcon: () => (
-            <Icon name="cart-outline" fun={handlePress}/>
+            <Icon name="cart-outline" />
           ),
         }}
         lazy={true}

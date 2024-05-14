@@ -87,9 +87,6 @@ const styles = StyleSheet.create({
     fontSize: isWeb ? 24 : width * 0.045,
     fontWeight: 'bold',
     marginBottom: 10,
-    //flexShrink: 1,
-    //flexWrap: 'wrap',
-    //lineHeight: 20,
   },
   price: {
     fontSize: isWeb ? 32 : width * 0.045,

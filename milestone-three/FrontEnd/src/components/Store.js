@@ -102,14 +102,6 @@ const reducer = (state = initialState, action) => {
         totalItems: state.totalItems > 0 ? state.totalItems - 1 : 0,
       };
 
-    /*case UPDATE_TOTAL_CART_PRICE:
-      console.log('Updating total cart price');
-      const totalCartPrice = state.cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-      return {
-        ...state,
-        totalCartPrice,
-      };*/
-
     default:
       return state;
   };
