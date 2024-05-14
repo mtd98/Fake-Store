@@ -29,10 +29,24 @@ const Products = () => (
 );
 
 const MyTabNavigator = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    checkLogin();
+  }, []);
+
+  const checkLogin = async () => {
+    try { 
+
+    } catch (error) {
+      console.error('Error with Login Status', error);
+    }
+  };
+
   const totalItems = useSelector(state => state.cart.totalItems);
   const totalOrders = 1;
   return ( 
-    <Tab.Navigator 
+    <Tab.Navigator initialRouteName="User Profile"
       screenOptions={{
         activeTintColor: 'blue', 
         inactiveTintColor: 'gray',
@@ -74,7 +88,7 @@ const MyTabNavigator = () => {
         lazy={true}
         unmountOnBlur={true}
       />
-      <Tab.Screen name="User Profile" component={ProfileScreen} 
+      <Tab.Screen name="User Profile" component={isLoggedIn ? ProfileScreen: SignInScreen} 
         options={{ 
           headerShown: false,
           tabBarIcon: () => (
