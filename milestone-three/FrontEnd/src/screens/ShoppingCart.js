@@ -38,9 +38,9 @@ function ShoppingCart ({cartItems}) {
 
   return (
     <View style={styles.container}>
-      <Title text={"Cart"}/>
+      <Title text={"Shopping Cart"}/>
         {cartItems.length === 0 ? (
-          <Text style={styles.emptyText}>Your shopping cart is empty</Text>
+          <Text style={styles.emptyText}>Your Cart is Empty</Text>
         ):(
           <View style={styles.itemContainer}>
             <Text style={styles.cartHeaderText}>Cart Total Price: ${totalPrice.toFixed(2)}</Text>

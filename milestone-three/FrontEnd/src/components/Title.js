@@ -18,9 +18,9 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: "center",
-    fontSize: isWeb ? 44 : width * 0.1,
+    fontSize: isWeb ? 40 : width * 0.1,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 20,
     top: 20,
   }
 });

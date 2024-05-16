@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
 import CustomModal from "../components/Modal";
+import { Title } from '../components/Title';
 
 export default function LoginPage({ navigation }){
   const [email, setEmail] = useState('');
@@ -60,7 +61,7 @@ export default function LoginPage({ navigation }){
     <View style={styles.container}>
       <CustomModal isVisible={isPopupVisible} onClose={() => setPopupVisible(false)} message={message} />
       <View style={styles.formContainer}>
-        <Text style={styles.title}>Login</Text>
+        <Title text={"Sign In with your Email and Password"}/>
         <TextInput
           style={styles.input}
           placeholder="Email"
@@ -79,12 +80,12 @@ export default function LoginPage({ navigation }){
             <Text style={styles.buttonText}>Clear</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={handleSignIn}>
-            <Text style={styles.buttonText}>Submit</Text>
+            <Text style={styles.buttonText}>Sign In</Text>
           </TouchableOpacity>
         </View>
       </View>
       <TouchableOpacity style={styles.switchButton} onPress={navToSignup}>
-        <Text style={styles.switchButtonText}>Change to Signup</Text>
+        <Text style={styles.switchButtonText}>Switch To: Sign Up</Text>
       </TouchableOpacity>
     </View>
   );
@@ -105,11 +106,6 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginBottom: 20,
     width: '100%',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
   },
   input: {
     width: '100%',

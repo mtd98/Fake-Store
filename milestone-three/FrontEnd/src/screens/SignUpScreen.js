@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 
 import CustomModal from "../components/Modal";
+import { Title } from '../components/Title';
 
 export default function SignupPage({ navigation }){
   const [username, setUsername] = useState('');
@@ -66,7 +67,7 @@ export default function SignupPage({ navigation }){
     <View style={styles.container}>
       <CustomModal isVisible={isPopupVisible} onClose={() => setPopupVisible(false)} message={message} />
       <View style={styles.formContainer}>
-        <Text style={styles.title}>Signup</Text>
+        <Title text={"Sign Up a new user"}/>        
         <TextInput
           style={styles.input}
           placeholder="Username"
@@ -96,7 +97,7 @@ export default function SignupPage({ navigation }){
         </View>
       </View>
       <TouchableOpacity style={styles.switchButton} onPress={navToLogin}>
-        <Text style={styles.switchButtonText}>Change to Login</Text>
+        <Text style={styles.switchButtonText}>Switch To: Sign In</Text>
       </TouchableOpacity>
     </View>
   );

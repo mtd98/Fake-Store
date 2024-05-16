@@ -74,7 +74,7 @@ export default function Categories({ navigation }) {
   
   return (
     <View style={styles.container}>
-      <Title text={"Categories"}/>
+      <Title text={"Product Categories"}/>
       <View style={styles.itemBox}>
         {loading ? ( 
           <ActivityIndicator size="large" color="#0000ff"/>
