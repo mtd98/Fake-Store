@@ -44,7 +44,10 @@ export default function SignupPage({ navigation }){
       console.log('Response', responseData);
       if (responseData.status === 'OK') {
         console.log("Registration successful")
-        togglePopup(responseData.message);
+
+        //await AsyncStorage.setItem('userData', JSON.stringify(responseData));
+        //navigation.navigate('ProfileScreen');
+
       } else {
         console.log('Registration failed:', responseData.message);
         togglePopup(responseData.message);

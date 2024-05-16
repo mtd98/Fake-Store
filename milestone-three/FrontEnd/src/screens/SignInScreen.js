@@ -1,18 +1,56 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+
+import CustomModal from "../components/Modal";
 
 export default function LoginPage({ navigation }){
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const [isPopupVisible, setPopupVisible] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const togglePopup = (msg = "") => {
+    setMessage(msg);
+    setPopupVisible(!isPopupVisible);
+  };
 
   const handleClear = () => {
     setEmail('');
     setPassword('');
   };
 
-  const handleSubmit = () => {
-    
+  const handleSignIn = async () => {
+    try {
+      const requestBody = {
+        email: email,
+        password: password,
+      };
+      console.log("Request Body:", requestBody);
+
+      const response = await fetch('http://192.168.0.149:3000/users/signin', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+  
+      const responseData = await response.json();
+      console.log('Response', responseData);
+      if (responseData.status === 'OK') {
+        console.log("Sign In successful")
+      } else {
+        console.log('Sign in failed:', responseData.message);
+        togglePopup(responseData.message);
+      }
+    } catch (error) {
+      console.error('Error during signin:', error);
+      togglePopup("An error occurred. Please try again.");
+    }
   };
+;
 
   const navToSignup = () => {
     navigation.navigate('SignUpScreen');
@@ -20,6 +58,7 @@ export default function LoginPage({ navigation }){
 
   return (
     <View style={styles.container}>
+      <CustomModal isVisible={isPopupVisible} onClose={() => setPopupVisible(false)} message={message} />
       <View style={styles.formContainer}>
         <Text style={styles.title}>Login</Text>
         <TextInput
@@ -39,7 +78,7 @@ export default function LoginPage({ navigation }){
           <TouchableOpacity style={[styles.button, styles.clearButton]} onPress={handleClear}>
             <Text style={styles.buttonText}>Clear</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <TouchableOpacity style={styles.button} onPress={handleSignIn}>
             <Text style={styles.buttonText}>Submit</Text>
           </TouchableOpacity>
         </View>
