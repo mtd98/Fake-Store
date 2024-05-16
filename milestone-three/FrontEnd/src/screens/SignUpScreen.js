@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 
 export default function SignupPage({ navigation }){
   const [username, setUsername] = useState('');
@@ -12,8 +12,34 @@ export default function SignupPage({ navigation }){
     setPassword('');
   };
 
-  const handleSubmit = () => {
+  const handleSignUp = async () => {
+    try {
+      const requestBody = {
+        name: username,
+        email: email,
+        password: password,
+      };
+      console.log("Request Body:", requestBody);
 
+      const response = await fetch('http://192.168.0.149:3000/users/signup', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+  
+      const responseData = await response.json();
+      console.log('Response', responseData);
+      if (responseData.status === 'OK') {
+        console.log("Registration successful")
+      } else {
+        console.log('Registration failed:', responseData.message);
+      }
+    } catch (error) {
+      console.error('Error during signup:', error);
+    }
   };
 
   const navToLogin = () => {
@@ -47,7 +73,7 @@ export default function SignupPage({ navigation }){
           <TouchableOpacity style={[styles.button, styles.clearButton]} onPress={handleClear}>
             <Text style={styles.buttonText}>Clear</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <TouchableOpacity style={styles.button} onPress={handleSignUp}>
             <Text style={styles.buttonText}>Submit</Text>
           </TouchableOpacity>
         </View>

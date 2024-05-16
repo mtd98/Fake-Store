@@ -17,6 +17,7 @@ import ProfileScreen from "./src/screens/ProfileScreen"
 import { Icon } from './src/components/Icon';
 import store from './src/components/Store';
 
+
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
