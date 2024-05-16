@@ -1,10 +1,20 @@
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 
+import CustomModal from "../components/Modal";
+
 export default function SignupPage({ navigation }){
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const [isPopupVisible, setPopupVisible] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const togglePopup = (msg = "") => {
+    setMessage(msg);
+    setPopupVisible(!isPopupVisible);
+  };
 
   const handleClear = () => {
     setUsername('');
@@ -34,11 +44,14 @@ export default function SignupPage({ navigation }){
       console.log('Response', responseData);
       if (responseData.status === 'OK') {
         console.log("Registration successful")
+        togglePopup(responseData.message);
       } else {
         console.log('Registration failed:', responseData.message);
+        togglePopup(responseData.message);
       }
     } catch (error) {
       console.error('Error during signup:', error);
+      togglePopup("An error occurred. Please try again.");
     }
   };
 
@@ -48,6 +61,7 @@ export default function SignupPage({ navigation }){
 
   return (
     <View style={styles.container}>
+      <CustomModal isVisible={isPopupVisible} onClose={() => setPopupVisible(false)} message={message} />
       <View style={styles.formContainer}>
         <Text style={styles.title}>Signup</Text>
         <TextInput
