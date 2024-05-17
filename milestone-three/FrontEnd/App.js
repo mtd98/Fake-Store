@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { View } from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -16,7 +17,7 @@ import ProfileScreen from "./src/screens/ProfileScreen"
 
 import { Icon } from './src/components/Icon';
 import store from './src/components/Store';
-
+import CustomModal from "./src/components/Modal";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -39,6 +40,11 @@ const Profile = () => (
 
 const MyTabNavigator = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isPopupVisible, setPopupVisible] = useState(false);
+  const [selectedTab, setSelectedTab ] = useState('SignInScreen');
+ 
+  const totalItems = useSelector(state => state.cart.totalItems);
+  const totalOrders = 1;
 
   useEffect(() => {
     checkLogin();
@@ -51,63 +57,74 @@ const MyTabNavigator = () => {
       console.error('Error with Login Status', error);
     }
   };
-
-  const totalItems = useSelector(state => state.cart.totalItems);
-  const totalOrders = 1;
+  
   return ( 
-    <Tab.Navigator initialRouteName="User Profile"
-      screenOptions={{
-        activeTintColor: 'blue', 
-        inactiveTintColor: 'gray',
-        style: {
-          backgroundColor: 'white',
-        },
-        labelStyle: {
-          fontSize: 16,
-        },
-      }}
-    >
-      <Tab.Screen name="Products" component={Products} 
-        options={{ 
-          headerShown: false, 
-          tabBarIcon: () => (
-            <Icon name="basket-outline" />
-          ),
+    <> 
+      <Tab.Navigator initialRouteName="User Profile"
+        screenListeners={({ navigation }) => ({
+          tabPress: (e) => {
+            const tabName = e.target;
+            if (!isLoggedIn && tabName !== 'User Profile') {
+              setPopupVisible(true);
+              setSelectedTab(tabName);
+              e.preventDefault();
+            }
+          },
+        })}
+        screenOptions={{
+          activeTintColor: 'blue', 
+          inactiveTintColor: 'gray',
+          style: {
+            backgroundColor: 'white',
+          },
+          labelStyle: {
+            fontSize: 16,
+          },
         }}
-      />
-      <Tab.Screen name="My Cart" component={ShoppingCart} 
-        options={{ 
-          headerShown: false,
-          tabBarBadge: totalItems > 0 ? `${totalItems}` : null,
-          tabBarIcon: () => (
-            <Icon name="cart-outline" />
-          ),
-        }}
-        lazy={true}
-        unmountOnBlur={true}
-      />
-      <Tab.Screen name="My Orders" component={OrderScreen} 
-        options={{ 
-          headerShown: false,
-          tabBarBadge: totalOrders > 0 ? `${totalOrders}` : null,
-          tabBarIcon: () => (
-            <Icon name="gift-outline" />
-          ),
-        }}
-        lazy={true}
-        unmountOnBlur={true}
-      />
-      <Tab.Screen name="User Profile" component={isLoggedIn ? ProfileScreen: Profile} 
-        options={{ 
-          headerShown: false,
-          tabBarIcon: () => (
-            <Icon name="person-outline" />
-          ),
-        }}
-        lazy={true}
-        unmountOnBlur={true}
-      />
-    </Tab.Navigator>
+      >
+        <Tab.Screen name="Products" component={Products} 
+          options={{ 
+            headerShown: false, 
+            tabBarIcon: () => (
+              <Icon name="basket-outline" />
+            ),
+          }}
+        />
+        <Tab.Screen name="My Cart" component={ShoppingCart} 
+          options={{ 
+            headerShown: false,
+            tabBarBadge: totalItems > 0 ? `${totalItems}` : null,
+            tabBarIcon: () => (
+              <Icon name="cart-outline" />
+            ),
+          }}
+          lazy={true}
+          unmountOnBlur={true}
+        />
+        <Tab.Screen name="My Orders" component={OrderScreen} 
+          options={{ 
+            headerShown: false,
+            tabBarBadge: totalOrders > 0 ? `${totalOrders}` : null,
+            tabBarIcon: () => (
+              <Icon name="gift-outline" />
+            ),
+          }}
+          lazy={true}
+          unmountOnBlur={true}
+        />
+        <Tab.Screen name="User Profile" component={isLoggedIn ? ProfileScreen: Profile} 
+          options={{ 
+            headerShown: false,
+            tabBarIcon: () => (
+              <Icon name="person-outline" />
+            ),
+          }}
+          lazy={true}
+          unmountOnBlur={true}
+        /> 
+      </Tab.Navigator>
+      <CustomModal isVisible={isPopupVisible} onClose={() => setPopupVisible(false)} message={"Please log in or sign up to access this page"} />
+    </>
   );
 };
 
