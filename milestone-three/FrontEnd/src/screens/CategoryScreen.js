@@ -1,11 +1,14 @@
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, Dimensions, Platform, ActivityIndicator} from 'react-native';
 import { useState, useEffect } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from 'expo-status-bar';
+
 import { Title } from '../components/Title';
 import { backgroundColour, borderColour, mainComponentColour, textColour } from '../constants/Color';
 
 const CategoryAPIURL = 'https://fakestoreapi.com/products/categories';
 const ProductAPIURL = 'https://fakestoreapi.com/products';
+
 const { width } = Dimensions.get('window');
 const isWeb = Platform.OS === 'web';
 
@@ -13,23 +16,32 @@ export default function Categories({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState('');
 
-  useEffect(() => {
-    getData();
-  }, []);
 
   const getData = async () => {
     try {
-      const getCategory = await fetch(CategoryAPIURL);
-      const categoryJSON = await getCategory.json();
-      setTimeout(() => {
-        setCategories(categoryJSON);
+      const cachedCategories = await AsyncStorage.getItem('categories');
+      if (cachedCategories) {
+        const parsedCategories = JSON.parse(cachedCategories);
+        setCategories([...parsedCategories, "Mason Dunbar"]);
         setLoading(false);
-      }, 2000); 
+      } else {
+        const getCategory = await fetch(CategoryAPIURL);
+        const categoryJSON = await getCategory.json();
+        setTimeout(async () => {
+          await AsyncStorage.setItem('categories', JSON.stringify(categoryJSON));
+          setCategories(categoryJSON);
+          setLoading(false);
+        }, 2000);
+      }
     } catch (error) {
       console.log("Failed to get Data")
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   const getCategoryData = async (categories) => {
     try {

@@ -39,7 +39,7 @@ const Profile = () => (
 );
 
 const MyTabNavigator = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [isPopupVisible, setPopupVisible] = useState(false);
   const [selectedTab, setSelectedTab ] = useState('SignInScreen');
  
