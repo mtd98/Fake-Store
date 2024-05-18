@@ -57,7 +57,7 @@ export default function Categories({ navigation }) {
   const navToProductList = async (item) =>{
     try {
       const filterData = await getCategoryData(item);
-      navigation.navigate('ProductList', {filterData});
+      navigation.navigate('ProductList', { filterData, category: item});
     } catch (error) {
       console.log("Nav data error");
     }

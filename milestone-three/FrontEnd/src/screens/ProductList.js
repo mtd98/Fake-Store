@@ -9,8 +9,17 @@ import { backgroundColour, borderColour, mainComponentColour, secondaryTextColou
 const {width, height } = Dimensions.get("window");
 const isWeb = Platform.OS === 'web';
 
+const capitaliseCategory = (string) => {        
+  let words = string.split(" ");
+  for (let i = 0; i < words.length; i ++) {
+    words[i] = words[i][0].toUpperCase() + words[i].substr(1);
+  }
+  words = words.join(" ");
+  return words;
+};
+
 export default function ProductList({ route, navigation}) {
-  const {filterData} = route.params;
+  const {filterData, category } = route.params;
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
 
@@ -21,7 +30,10 @@ export default function ProductList({ route, navigation}) {
     }, 2000);
   }, [filterData]);
 
+  const capitalizedCategory = capitaliseCategory(category);
+
   const navGoBack = () => navigation.goBack();
+
 
   const renderItem = ({ item }) => (
     <TouchableOpacity onPress={() => navigation.navigate('ItemDetails', {item})}>
@@ -33,11 +45,13 @@ export default function ProductList({ route, navigation}) {
         </View>
       </View>
     </TouchableOpacity>
+
+    
   );
 
   return (
     <View style={styles.container}>
-      <Title text={"List of Filtered Products"}/>
+      <Title text={capitalizedCategory}/>
       <View style={styles.itemBox}>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff"/>
