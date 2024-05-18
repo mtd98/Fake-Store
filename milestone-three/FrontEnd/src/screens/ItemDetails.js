@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Image, Dimensions, Platform, ActivityIndicator} from 'react-native';
+import { StyleSheet, View, Text, Image, Dimensions, Platform, ActivityIndicator, ScrollView} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { connect } from 'react-redux';
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { addToCart, updateTotalCartPrice } from '../components/Store';
 import { IconButton } from '../components/IconButton';
+import { Title } from '../components/Title';
 import { backgroundColour } from '../constants/Color';
 
 const { width, height } = Dimensions.get('window');
@@ -31,6 +32,7 @@ function ItemDetails({ route, navigation, addToCart }) {
 
   return (
     <View style={styles.container}>
+      <Title text={"Product Details"}/>
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : ( 
@@ -45,7 +47,11 @@ function ItemDetails({ route, navigation, addToCart }) {
           <Text>Sold: ({item.rating.count})</Text>
         </View>
         <Text style={styles.price}>Price: ${item.price}</Text>
-        <Text style={styles.description}>{item.description}</Text>       
+        <View style={styles.descriptionContainer}>
+          <ScrollView contentContainerStyle={styles.scrollView}>
+            <Text style={styles.description}>{item.description}</Text>
+          </ScrollView> 
+        </View>    
         <View style={styles.buttonContainer}>
           <IconButton name="backspace-outline" fun={navGoBack} text="Go Back"/>
           <IconButton name="cart-outline" fun={handleAddToCart} text="Add to Cart"/>
@@ -62,6 +68,8 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: Platform.OS === 'ios' ? 40 : 20,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   itemContainer: {
     alignItems: "center",
@@ -74,7 +82,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   image: {
-    width: isWeb ? width * 0.2 : width * 0.5,
+    width: isWeb ? width * 0.17 : width * 0.5,
     aspectRatio: 1, 
     borderRadius: 10,
     marginBottom: 10,
@@ -88,20 +96,19 @@ const styles = StyleSheet.create({
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    //marginBottom: 10,
   },
   rating: {
     fontSize: isWeb ? width * 0.01 : width * 0.06,
     marginRight: 5,
   },
   price: {
-    fontSize: isWeb ? width * 0.01 : width * 0.08,
+    fontSize: isWeb ? width * 0.02 : width * 0.08,
     fontWeight: 'bold',
-    marginBottom: 10,
+    //marginBottom: 10,
   },
-  description: {
-    fontSize: isWeb ? width * 0.01 : width * 0.029,
-    textAlign: 'center',
+  descriptionContainer: {
+    maxHeight: 150,
     backgroundColor: "white",
     borderColor:"black",
     borderWidth: 1,
@@ -109,8 +116,18 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginHorizontal: isWeb ? 150 : 10,
   },
+  scrollView: {
+    //flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  description: {
+    fontSize: isWeb ? width * 0.02 : width * 0.029,
+    textAlign: 'center',
+ 
+  },
   buttonContainer: {
-    marginTop: 20,
+    //marginTop: 20,
     flexDirection: "row",
   },
 });
