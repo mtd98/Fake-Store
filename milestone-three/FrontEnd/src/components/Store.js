@@ -1,11 +1,46 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  cartItems: [],
-  totalItems: 0,
-  totalPrice: 0,
+  id: null,
+  name: '',
+  email: '',
+  token: '',
+  //cartItems: [],
+  //totalItems: 0,
+  //totalPrice: 0,
 };
 
+const userSlice = createSlice({
+  name: 'user',
+  initialState,
+  reducers: {
+    signInSuccess(state, action) {
+      return {
+        ...state,
+        ...action.payload,
+        isLoggedIn: true,
+      };
+    },
+    signOut(state) {
+      return {
+        ...initialState,
+      };
+    },
+  },
+});
+
+export const { signInSuccess, signOut } = userSlice.actions;
+
+// Configure the store
+const store = configureStore({
+  reducer: {
+    user: userSlice.reducer,
+  },
+});
+
+export default store;
+
+/*
 const ADD_TO_CART = 'ADD_TO_CART';
 const UPDATE_CART_ITEM_QUANTITY = 'UPDATE_CART_ITEM_QUANTITY';
 const INCREMENT_QUANTITY = 'INCREMENT_QUANTITY';
@@ -113,4 +148,4 @@ const store = configureStore({
   },
 });
 
-export default store;
+export default store;*/

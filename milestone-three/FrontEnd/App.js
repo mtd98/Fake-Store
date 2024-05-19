@@ -13,10 +13,12 @@ import ShoppingCart from "./src/screens/ShoppingCart";
 import OrderScreen from "./src/screens/OrderScreen";
 import SignUpScreen from "./src/screens/SignUpScreen";
 import SignInScreen from "./src/screens/SignInScreen";
-import ProfileScreen from "./src/screens/ProfileScreen"
+import ProfileScreen from "./src/screens/ProfileScreen";
+
+import store from './src/components/Store';
+
 
 import { Icon } from './src/components/Icon';
-import store from './src/components/Store';
 import CustomModal from "./src/components/Modal";
 
 const Tab = createBottomTabNavigator();
@@ -39,24 +41,22 @@ const Profile = () => (
 );
 
 const MyTabNavigator = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  
   const [isPopupVisible, setPopupVisible] = useState(false);
   const [selectedTab, setSelectedTab ] = useState('SignInScreen');
  
-  const totalItems = useSelector(state => state.cart.totalItems);
+  
+  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
+  //const totalItems = useSelector(state => state.cart.totalItems);
+
+  //Static Values - Remove
+  //const [isLoggedIn, setIsLoggedIn] = useState(false);
   const totalOrders = 1;
+  const totalItems = 1;
 
   useEffect(() => {
-    checkLogin();
-  }, []);
-
-  const checkLogin = async () => {
-    try { 
-
-    } catch (error) {
-      console.error('Error with Login Status', error);
-    }
-  };
+    console.log('is logged in', isLoggedIn);
+  }, [isLoggedIn]);
   
   return ( 
     <> 
