@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 
+import { signInSuccess } from '../components/Store';
 import CustomModal from "../components/Modal";
 import { Title } from '../components/Title';
 
@@ -8,6 +10,7 @@ export default function SignupPage({ navigation }){
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
 
   const [isPopupVisible, setPopupVisible] = useState(false);
   const [message, setMessage] = useState("");
@@ -24,6 +27,7 @@ export default function SignupPage({ navigation }){
   };
 
   const handleSignUp = async () => {
+    
     try {
       const requestBody = {
         name: username,
@@ -45,10 +49,13 @@ export default function SignupPage({ navigation }){
       console.log('Response', responseData);
       if (responseData.status === 'OK') {
         console.log("Registration successful")
-
-        //await AsyncStorage.setItem('userData', JSON.stringify(responseData));
-        //navigation.navigate('ProfileScreen');
-
+        dispatch(signInSuccess({
+          id: responseData.id,
+          name: responseData.name,
+          email: responseData.email,
+          token: responseData.token,
+        }));
+        navigation.navigate('ProfileScreen');
       } else {
         console.log('Registration failed:', responseData.message);
         togglePopup(responseData.message);
