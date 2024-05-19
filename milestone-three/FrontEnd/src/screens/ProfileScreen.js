@@ -1,27 +1,116 @@
-import { Text, SafeAreaView, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { View, Text, StyleSheet, Button } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { signOut } from '../components/Store';
+import UpdateModal from "../components/UpdateModal";
+import { Title } from '../components/Title';
 
-export default function App() {
+export default function ProfilePage({}){
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  const [isPopupVisible, setPopupVisible] = useState(false);
+
+  const togglePopup = () => {
+    setPopupVisible(!isPopupVisible);
+  };
+
+  const handleUpdate = () => {
+    togglePopup();
+  };
+
+  const handleSignOut = () => {
+    dispatch(signOut());
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.paragraph}>
-        Profile Screen
-      </Text>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <UpdateModal isVisible={isPopupVisible} onClose={() => setPopupVisible(false)}/>
+      <View style={styles.formContainer}>
+      <Title text={"Profile"}/>
+        <View style={styles.userInfo}>
+          <Text style={styles.label}>Name:</Text>
+          <Text style={styles.text}>{user.name}</Text>
+        </View>
+        <View style={styles.userInfo}>
+          <Text style={styles.label}>Email:</Text>
+          <Text style={styles.text}>{user.email}</Text>
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button title="Update" onPress={handleUpdate} style={styles.button} />
+          <View style={styles.buttonSpace} />
+          <Button title="Sign Out" onPress={handleSignOut} style={[styles.button, styles.signOut]} />
+        </View>
+      </View>
+    </View>
   );
-}
+};
+
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: '#ecf0f1',
-    padding: 8,
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+    paddingHorizontal: 20,
   },
-  paragraph: {
-    margin: 24,
-    fontSize: 18,
+  formContainer: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    elevation: 5,
+    marginBottom: 20,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  userInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '40%',
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+  },
+  label: {
     fontWeight: 'bold',
-    textAlign: 'center',
+    marginRight: 5,
+    color: '#333',
   },
+  text: {
+    flex: 1,
+    color: '#666',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  button: {
+    flex: 1,
+    height: 40,
+    backgroundColor: 'blue',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginHorizontal: 10,
+    marginBottom: 10,
+  },
+  signOut: {
+    marginRight: 10,
+    backgroundColor: 'gray',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  buttonSpace: {
+    width: 10,
+  }
 });

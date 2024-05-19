@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
-import { View } from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Provider, useSelector } from "react-redux";
+
+import store from './src/components/Store';
+import { Icon } from './src/components/Icon';
+import CustomModal from "./src/components/Modal";
 
 import SplashScreen from "./src/screens/SplashScreen";
 import CategoryScreen from "./src/screens/CategoryScreen";
@@ -14,12 +17,6 @@ import OrderScreen from "./src/screens/OrderScreen";
 import SignUpScreen from "./src/screens/SignUpScreen";
 import SignInScreen from "./src/screens/SignInScreen";
 import ProfileScreen from "./src/screens/ProfileScreen";
-
-import store from './src/components/Store';
-
-
-import { Icon } from './src/components/Icon';
-import CustomModal from "./src/components/Modal";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();

@@ -21,6 +21,12 @@ const userSlice = createSlice({
         isLoggedIn: true,
       };
     },
+    updateUserProfile(state, action) {
+      return {
+        ...state,
+        name: action.payload.name,
+      }
+    },
     signOut(state) {
       return {
         ...initialState,
@@ -29,9 +35,8 @@ const userSlice = createSlice({
   },
 });
 
-export const { signInSuccess, signOut } = userSlice.actions;
+export const { signInSuccess, updateUserProfile, signOut } = userSlice.actions;
 
-// Configure the store
 const store = configureStore({
   reducer: {
     user: userSlice.reducer,
