@@ -1,21 +1,20 @@
 import { StyleSheet, Text, View, FlatList, Button, Image, Dimensions, Platform } from 'react-native';
-import { connect , useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
-import store from '../components/Store';
+
+import { incrementQuantity, decrementQuantity } from '../components/Store';
 import { Title } from '../components/Title';
 import { backgroundColour, borderColour } from '../constants/Color';
 
 const { width, height } = Dimensions.get('window');
 const isWeb = Platform.OS === 'web';
 
-function ShoppingCart ({cartItems}) {
+function ShoppingCart () {
+  const cartItems = useSelector(state => state.cart.cartItems);
   const dispatch = useDispatch();
-  store.subscribe(() => {
-    const state = store.getState(); 
-  });
 
-  const totalPrice = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-  const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const totalPrice = cartItems.reduce((total, item) => total + (item.price * Number(item.quantity)), 0);
+  const totalItems = cartItems.reduce((total, item) => total + Number(item.quantity), 0);
 
   const renderItem = ({ item }) => (
     <View style={styles.listContainer}>
@@ -26,11 +25,10 @@ function ShoppingCart ({cartItems}) {
         <Text style={styles.quantity}>Quantity: {item.quantity}</Text>
       </View>
       <View style={styles.quantityContainer}>
-        
         <View style={styles.buttonContainer}>
-          <Button title="+" onPress={() => dispatch({ type: 'INCREMENT_QUANTITY', payload: item.id })} />
+          <Button title="+" onPress={() => dispatch(incrementQuantity({ id: item.id }))} />
           <View style={styles.buttonSpace} />
-          <Button title="-" onPress={() => dispatch({ type: 'DECREMENT_QUANTITY', payload: item.id })} />
+          <Button title="-" onPress={() => dispatch(decrementQuantity({ id: item.id }))} />
         </View>
       </View>
     </View>
@@ -55,12 +53,6 @@ function ShoppingCart ({cartItems}) {
       </View>
   );
 }
-
-const mapStateToProps = (state) => {
-  return {
-    cartItems: state.cart.cartItems,
-  }
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -131,5 +123,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connect(mapStateToProps)(ShoppingCart);
-
+export default ShoppingCart;

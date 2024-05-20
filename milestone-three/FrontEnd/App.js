@@ -44,15 +44,15 @@ const MyTabNavigator = () => {
  
   
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
-  //const totalItems = useSelector(state => state.cart.totalItems);
+  const totalItems = useSelector(state => state.cart.cartItems.reduce((total, item) => total + Number(item.quantity), 0));
 
   //Static Values - Remove
-  //const [isLoggedIn, setIsLoggedIn] = useState(false);
+  //const [isLoggedIn, setIsLoggedIn] = useState(true);
   const totalOrders = 1;
-  const totalItems = 1;
+  //const totalItems = 0;
 
   useEffect(() => {
-    console.log('is logged in', isLoggedIn);
+    //console.log('is logged in', isLoggedIn);
   }, [isLoggedIn]);
   
   return ( 

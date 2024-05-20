@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Image, Dimensions, Platform, ActivityIndicator, ScrollView} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { connect } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import { addToCart, updateTotalCartPrice } from '../components/Store';
+import { addToCart } from '../components/Store';
 import { IconButton } from '../components/IconButton';
 import { Title } from '../components/Title';
 import { backgroundColour } from '../constants/Color';
@@ -12,8 +12,11 @@ import { backgroundColour } from '../constants/Color';
 const { width, height } = Dimensions.get('window');
 const isWeb = Platform.OS === 'web';
 
-function ItemDetails({ route, navigation, addToCart }) {
+function ItemDetails({ route, navigation }) {
   const {item} = route.params;
+  const dispatch = useDispatch();
+  const userToken = useSelector(state => state.user.token);
+
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
 
@@ -26,10 +29,44 @@ function ItemDetails({ route, navigation, addToCart }) {
 
   const navGoBack = () => navigation.goBack();
 
-  const handleAddToCart = () => {
-    addToCart(item);
-  }
-
+  const handleAddToCart = async () => {
+    try {
+      //console.log("Item:", item);
+      const requestBody = {
+        items: [
+          {
+            id: item.id,
+            price: item.price,
+            count: 1,
+          }
+        ]
+      };
+      //console.log("Request Body:", requestBody);
+    
+      const response = await fetch('http://192.168.0.149:3000/cart', {
+        method: 'PUT', 
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userToken}`,
+        },
+        body: JSON.stringify(requestBody),
+      });
+    
+      const responseData = await response.json();
+      //console.log('Response', responseData);
+      if (response.ok) {
+        //console.log("Items added to the cart successfully")
+        dispatch(addToCart(item));
+        //console.log(`${item.title} has been added to the cart.`);
+      } else {
+        console.log('Failed to add items to the cart:', responseData.error);
+      }
+    } catch (error) {
+      console.error('Error while adding items to the cart:', error);
+    }
+  };
+  
   return (
     <View style={styles.container}>
       <Title text={"Product Details"}/>

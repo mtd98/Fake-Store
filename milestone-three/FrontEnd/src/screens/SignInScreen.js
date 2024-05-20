@@ -31,7 +31,7 @@ export default function LoginPage({ navigation }){
         email: email,
         password: password,
       };
-      console.log("Request Body:", requestBody);
+      //console.log("Request Body:", requestBody);
 
       const response = await fetch('http://192.168.0.149:3000/users/signin', {
         method: 'POST',
@@ -43,9 +43,9 @@ export default function LoginPage({ navigation }){
       });
   
       const responseData = await response.json();
-      console.log('Response', responseData);
+      //console.log('Response', responseData);
       if (responseData.status === 'OK') {
-        console.log("Sign In successful")
+        //console.log("Sign In successful")
         dispatch(signInSuccess({
           id: responseData.id,
           name: responseData.name,
