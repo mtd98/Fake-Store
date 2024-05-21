@@ -52,11 +52,6 @@ function ShoppingCart () {
         //console.log("Order Created successful")
         dispatch(addOrder(responseData.order));
 
-
-        const totalNewOrders = getTotalNewOrders();
-        dispatch(updateTotalNewOrders(totalNewOrders + 1));
-
-
         dispatch(clearCart());
         //console.log("Cart after clearing:", cartItems);
         togglePopup("A new order has been created");
@@ -68,11 +63,6 @@ function ShoppingCart () {
       console.error('Error during Order:', error);
       togglePopup("An error occurred. Please try again.");
     }
-  };
-
-  const getTotalNewOrders = () => {
-    const orders = useSelector(state => state.orders.orders);
-    return orders.filter(order => order.uid === userId && !order.is_paid && !order.is_delivered).length;
   };
 
   const renderItem = ({ item }) => (
