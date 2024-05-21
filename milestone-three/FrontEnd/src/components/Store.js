@@ -30,8 +30,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { signInSuccess, updateUserProfile, signOut } = userSlice.actions;
-
 const cartSlice = createSlice({
   name: 'cart',
   initialState: {
@@ -66,14 +64,36 @@ const cartSlice = createSlice({
         }
       }
     },
+    clearCart: (state) => {
+      state.cartItems = [];
+    },
   },
 });
 
-export const { addToCart, incrementQuantity, decrementQuantity } = cartSlice.actions;
+const orderSlice = createSlice({
+  name: 'orders',
+  initialState: {
+    orders: [],
+    totalNewOrders: 0,
+  },
+  reducers: {
+    addOrder: (state, action) => {
+      state.orders.push(action.payload);
+    },
+    updateTotalNewOrders: (state, action) => {
+      state.totalNewOrders = action.payload;
+    },
+  },
+});
+
+export const { signInSuccess, updateUserProfile, signOut } = userSlice.actions;
+export const { addToCart, incrementQuantity, decrementQuantity, clearCart } = cartSlice.actions;
+export const { addOrder, updateTotalNewOrders } = orderSlice.actions;
 
 const reducer = {
   user: userSlice.reducer,
   cart: cartSlice.reducer,
+  order: orderSlice.reducer,
 };
 
 const store = configureStore({

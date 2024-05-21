@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { StyleSheet, Text, View, FlatList, Button, Image, Dimensions, Platform } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
 
-import { incrementQuantity, decrementQuantity } from '../components/Store';
+import { incrementQuantity, decrementQuantity, addOrder, clearCart, updateTotalNewOrders } from '../components/Store';
+import CustomModal from "../components/Modal";
 import { Title } from '../components/Title';
 import { backgroundColour, borderColour } from '../constants/Color';
 
@@ -12,9 +14,66 @@ const isWeb = Platform.OS === 'web';
 function ShoppingCart () {
   const cartItems = useSelector(state => state.cart.cartItems);
   const dispatch = useDispatch();
+  const userToken = useSelector(state => state.user.token);
+  const userId = useSelector(state => state.user.id);
 
   const totalPrice = cartItems.reduce((total, item) => total + (item.price * Number(item.quantity)), 0);
   const totalItems = cartItems.reduce((total, item) => total + Number(item.quantity), 0);
+
+  const [isPopupVisible, setPopupVisible] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const togglePopup = (msg = "") => {
+    setMessage(msg);
+    setPopupVisible(!isPopupVisible);
+  };
+
+  const handleCheckout = async () => {
+    console.log("Handle checkout function called");
+    try {
+      const requestBody = {
+        items: cartItems
+      };
+      //console.log("Request Body:", requestBody);
+
+      const response = await fetch('http://192.168.0.149:3000/orders/neworder', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${userToken}`,
+        },
+        body: JSON.stringify(requestBody),
+      });
+  
+      const responseData = await response.json();
+      //console.log('Response', responseData);
+      if (responseData.status === 'OK') {
+        //console.log("Order Created successful")
+        dispatch(addOrder(responseData.order));
+
+
+        const totalNewOrders = getTotalNewOrders();
+        dispatch(updateTotalNewOrders(totalNewOrders + 1));
+
+
+        dispatch(clearCart());
+        //console.log("Cart after clearing:", cartItems);
+        togglePopup("A new order has been created");
+      } else {
+        console.log('Creating Order failed:', responseData.message);
+        togglePopup(responseData.message);
+      }
+    } catch (error) {
+      console.error('Error during Order:', error);
+      togglePopup("An error occurred. Please try again.");
+    }
+  };
+
+  const getTotalNewOrders = () => {
+    const orders = useSelector(state => state.orders.orders);
+    return orders.filter(order => order.uid === userId && !order.is_paid && !order.is_delivered).length;
+  };
 
   const renderItem = ({ item }) => (
     <View style={styles.listContainer}>
@@ -36,18 +95,22 @@ function ShoppingCart () {
 
   return (
     <View style={styles.container}>
+      <CustomModal isVisible={isPopupVisible} onClose={() => setPopupVisible(false)} message={message} />
       <Title text={"Shopping Cart"}/>
         {cartItems.length === 0 ? (
           <Text style={styles.emptyText}>Your Cart is Empty</Text>
         ):(
-          <View style={styles.itemContainer}>
-            <Text style={styles.cartHeaderText}>Cart Total Price: ${totalPrice.toFixed(2)}</Text>
-            <Text style={styles.cartHeaderText}>Item Total:{totalItems}</Text>
-            <FlatList 
-              data={cartItems}
-              renderItem={renderItem} 
-              keyExtractor={(item, index) => index.toString()}
-            />
+          <View>
+            <View style={styles.itemContainer}>
+              <Text style={styles.cartHeaderText}>Cart Total Price: ${totalPrice.toFixed(2)}</Text>
+              <Text style={styles.cartHeaderText}>Item Total:{totalItems}</Text>
+              <FlatList 
+                data={cartItems}
+                renderItem={renderItem} 
+                keyExtractor={(item, index) => index.toString()}
+              />
+            </View>
+            <Button title="Check Out" onPress={handleCheckout}/>
           </View>
         )}
       </View>

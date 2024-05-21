@@ -38,21 +38,13 @@ const Profile = () => (
 );
 
 const MyTabNavigator = () => {
-  
+  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
+  const totalItems = useSelector(state => state.cart.cartItems.reduce((total, item) => total + Number(item.quantity), 0));
+  const totalNewOrders = useSelector((state) => state.order.totalNewOrders);
   const [isPopupVisible, setPopupVisible] = useState(false);
   const [selectedTab, setSelectedTab ] = useState('SignInScreen');
  
-  
-  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
-  const totalItems = useSelector(state => state.cart.cartItems.reduce((total, item) => total + Number(item.quantity), 0));
-
-  //Static Values - Remove
-  //const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const totalOrders = 1;
-  //const totalItems = 0;
-
   useEffect(() => {
-    //console.log('is logged in', isLoggedIn);
   }, [isLoggedIn]);
   
   return ( 
@@ -101,7 +93,7 @@ const MyTabNavigator = () => {
         <Tab.Screen name="My Orders" component={OrderScreen} 
           options={{ 
             headerShown: false,
-            tabBarBadge: totalOrders > 0 ? `${totalOrders}` : null,
+            tabBarBadge: totalNewOrders > 0 ? `${totalNewOrders}` : null,
             tabBarIcon: () => (
               <Icon name="gift-outline" />
             ),
