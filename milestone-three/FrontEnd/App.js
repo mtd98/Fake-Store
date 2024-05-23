@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Provider, useSelector } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 
-import store from './src/components/Store';
+import store, { fetchCart, setCart } from './src/components/Store';
 import { Icon } from './src/components/Icon';
 import CustomModal from "./src/components/Modal";
 
@@ -38,13 +38,27 @@ const Profile = () => (
 );
 
 const MyTabNavigator = () => {
+  const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
-  const totalItems = useSelector(state => state.cart.cartItems.reduce((total, item) => total + Number(item.quantity), 0));
+  const userToken = useSelector((state) => state.user.token);
+  const totalItems = useSelector((state) => state.cart.cartItems.reduce((total, item) => total + Number(item.quantity), 0));
   const totalNewOrders = useSelector((state) => state.order.totalNewOrders);
+
   const [isPopupVisible, setPopupVisible] = useState(false);
   const [selectedTab, setSelectedTab ] = useState('SignInScreen');
  
   useEffect(() => {
+    const loadCart = async () => {
+      if (isLoggedIn){
+        try {
+          const cartData = await dispatch(fetchCart(userToken)).unwrap();
+          dispatch(setCart(cartData.items));
+        } catch (error) {
+          console.log('Failed to load cart', error);
+        }
+      }
+    };
+    loadCart();
   }, [isLoggedIn]);
   
   return ( 
@@ -54,6 +68,7 @@ const MyTabNavigator = () => {
           tabPress: (e) => {
             const tabName = e.target;
             if (!isLoggedIn && tabName !== 'User Profile') {
+              navigation.navigate('User Profile');
               setPopupVisible(true);
               setSelectedTab(tabName);
               e.preventDefault();

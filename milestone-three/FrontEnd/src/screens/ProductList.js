@@ -103,7 +103,7 @@ export default function ProductList({ route, navigation}) {
           <FlatList data={products} renderItem={renderItem} keyExtractor={(item) => item.id.toString()}/>
         )}
       </View>
-      <IconButton name="backspace-outline" fun={navGoBack} text="Go Back"/>
+      <IconButton name="backspace-outline" fun={navGoBack} text="Back"/>
       <StatusBar style='auto'/>
     </View>
   );

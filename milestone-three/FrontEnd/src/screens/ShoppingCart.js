@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, FlatList, Button, Image, Dimensions, Platform }
 import { useSelector, useDispatch } from 'react-redux';
 
 
-import { incrementQuantity, decrementQuantity, addOrder, clearCart, updateTotalNewOrders } from '../components/Store';
+import { incrementQuantity, decrementQuantity, addOrder, clearCart, updateTotalNewOrders, saveCart } from '../components/Store';
 import CustomModal from "../components/Modal";
 import { Title } from '../components/Title';
 import { backgroundColour, borderColour } from '../constants/Color';
@@ -12,11 +12,9 @@ const { width, height } = Dimensions.get('window');
 const isWeb = Platform.OS === 'web';
 
 function ShoppingCart () {
-  const cartItems = useSelector(state => state.cart.cartItems);
   const dispatch = useDispatch();
+  const cartItems = useSelector(state => state.cart.cartItems);
   const userToken = useSelector(state => state.user.token);
-  const userId = useSelector(state => state.user.id);
-
   const totalPrice = cartItems.reduce((total, item) => total + (item.price * Number(item.quantity)), 0);
   const totalItems = cartItems.reduce((total, item) => total + Number(item.quantity), 0);
 
@@ -26,6 +24,20 @@ function ShoppingCart () {
   const togglePopup = (msg = "") => {
     setMessage(msg);
     setPopupVisible(!isPopupVisible);
+  };
+
+  const handleIncrement = async (id) => {
+    console.log('Cart items before increment', cartItems);
+    await dispatch(incrementQuantity({ id }));
+    console.log('Cart items after increment:', cartItems);
+    await dispatch(saveCart({ token: userToken, cartItems: cartItems }));
+  };
+
+  const handleDecrement = async (id) => {
+    console.log('Cart items before decrement:', cartItems);
+    await dispatch(decrementQuantity({ id }));
+    console.log('Cart items after decrement:', cartItems);
+    await dispatch(saveCart({ token: userToken, cartItems: cartItems }));
   };
 
   const handleCheckout = async () => {
@@ -75,9 +87,9 @@ function ShoppingCart () {
       </View>
       <View style={styles.quantityContainer}>
         <View style={styles.buttonContainer}>
-          <Button title="+" onPress={() => dispatch(incrementQuantity({ id: item.id }))} />
+          <Button title="+" onPress={() => handleIncrement(item.id)} />
           <View style={styles.buttonSpace} />
-          <Button title="-" onPress={() => dispatch(decrementQuantity({ id: item.id }))} />
+          <Button title="-" onPress={() => handleDecrement(item.id)} />
         </View>
       </View>
     </View>

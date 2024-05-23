@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Image, Dimensions, Platform, ActivityIndicator, ScrollView} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import { addToCart } from '../components/Store';
+import { addToCart, saveCart } from '../components/Store';
 import { IconButton } from '../components/IconButton';
 import { Title } from '../components/Title';
 import { backgroundColour } from '../constants/Color';
@@ -14,9 +14,11 @@ const isWeb = Platform.OS === 'web';
 
 function ItemDetails({ route, navigation }) {
   const {item} = route.params;
+
   const dispatch = useDispatch();
   const userToken = useSelector(state => state.user.token);
-
+  const cartItems = useSelector(state => state.cart.cartItems);
+  
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
 
@@ -31,6 +33,16 @@ function ItemDetails({ route, navigation }) {
 
   const handleAddToCart = async () => {
     try {
+      console.log('Item to add:', item);
+      dispatch(addToCart(item));
+      const updatedCartItems = [...cartItems, { ...item, quantity: 1}];
+      console.log('Updated cart items:', updatedCartItems);
+      await dispatch(saveCart({ token: userToken, cartItems: updatedCartItems }));
+    } catch (error) {
+      console.log('Error while adding item', error);
+    }
+    
+    /*try {
       //console.log("Item:", item);
       const requestBody = {
         items: [
@@ -64,7 +76,7 @@ function ItemDetails({ route, navigation }) {
       }
     } catch (error) {
       console.error('Error while adding items to the cart:', error);
-    }
+    }*/
   };
   
   return (
@@ -169,4 +181,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(null, { addToCart })(ItemDetails);
+export default ItemDetails;
+//connect(null, { addToCart })(ItemDetails);
