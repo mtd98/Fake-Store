@@ -13,12 +13,12 @@ export const fetchCart = createAsyncThunk('cart/fetchCart', async (token) => {
     throw new Error('Failed to fetch cart');
   }
   const data = await response.json();
-  //console.log('Fetched cart data:', data);
+  console.log('Fetched cart data:', data);
   return data;
 });
 
 export const saveCart = createAsyncThunk('cart/saveCart', async ({ token, cartItems }) => {
-  //console.log('Saving cart:', cartItems);
+  console.log('Saving cart:', cartItems);
   const response = await fetch('http://192.168.0.149:3000/Cart', {
     method: 'PUT',
     headers: {
@@ -32,7 +32,7 @@ export const saveCart = createAsyncThunk('cart/saveCart', async ({ token, cartIt
     throw new Error('Failed to save cart');
   }
   const data = await response.json();
-  //console.log("Saved cart data:", data);
+  console.log("Saved cart data:", data);
   return data;
 });
 

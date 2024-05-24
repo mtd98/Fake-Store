@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, Button, Image, Dimensions, Platform } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
 
-import { incrementQuantity, decrementQuantity, clearCart,  saveCart, addOrder, fetchOrders } from '../components/Store';
+import { incrementQuantity, decrementQuantity, clearCart,  saveCart, fetchCart, addOrder, fetchOrders } from '../components/Store';
 import CustomModal from "../components/Modal";
 import { Title } from '../components/Title';
 import { backgroundColour, borderColour } from '../constants/Color';
@@ -15,34 +15,40 @@ function ShoppingCart () {
   const dispatch = useDispatch();
   const cartItems = useSelector(state => state.cart.cartItems);
   const userToken = useSelector(state => state.user.token);
-  const orders = useSelector(state => state.order.orders);
+  //const orders = useSelector(state => state.order.orders);
   const totalPrice = cartItems.reduce((total, item) => total + (item.price * Number(item.quantity)), 0);
   const totalItems = cartItems.reduce((total, item) => total + Number(item.quantity), 0);
 
   const [isPopupVisible, setPopupVisible] = useState(false);
   const [message, setMessage] = useState("");
 
+  useEffect(() => {
+    if (userToken) {
+      dispatch(fetchCart(userToken));
+    }
+  }, [userToken, dispatch]);
+
+  useEffect(() => {
+    const saveCartItems = async () => {
+      dispatch(saveCart({token: userToken, cartItems}));
+    }
+  }, [cartItems, dispatch, userToken]);
+
   const togglePopup = (msg = "") => {
     setMessage(msg);
     setPopupVisible(!isPopupVisible);
   };
 
-  const handleIncrement = async (id) => {
-    //console.log('Cart items before increment', cartItems);
-    await dispatch(incrementQuantity({ id }));
-    //console.log('Cart items after increment:', cartItems);
-    await dispatch(saveCart({ token: userToken, cartItems: cartItems }));
+  const handleIncrement = (id) => {
+    dispatch(incrementQuantity({ id }));
   };
 
-  const handleDecrement = async (id) => {
-    //console.log('Cart items before decrement:', cartItems);
-    await dispatch(decrementQuantity({ id }));
-    //console.log('Cart items after decrement:', cartItems);
-    await dispatch(saveCart({ token: userToken, cartItems: cartItems }));
+  const handleDecrement = (id) => {
+    dispatch(decrementQuantity({ id }));
   };
 
   const handleCheckout = async () => {
-    console.log("Handle checkout function called");
+    //console.log("Handle checkout function called");
     try {
       const requestBody = {
         items: cartItems
@@ -62,20 +68,15 @@ function ShoppingCart () {
       const responseData = await response.json();
       //console.log('Response', responseData);
       if (responseData.status === 'OK') {
-        //console.log("Order Created successful")
-
         dispatch(addOrder(responseData.order));
-
         dispatch(clearCart());
-        //console.log("Cart after clearing:", cartItems);
-
-        dispatch(saveCart());
-        //console.log("Orders after checkout:", orders);
-        
+        dispatch(saveCart({ token: userToken, cartItems: []}));
         dispatch(fetchOrders(userToken));
-        //console.log("Refetching orders");
-
         togglePopup("A new order has been created");
+        //console.log("Order Created successful")
+        //console.log("Orders after checkout:", orders);
+        //console.log("Cart after clearing:", cartItems);
+        //console.log("Refetching orders");
       } else {
         console.log('Creating Order failed:', responseData.message);
         togglePopup(responseData.message);

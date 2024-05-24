@@ -2,13 +2,15 @@ import { useState } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { signOut } from '../components/Store';
+import { saveCart, signOut } from '../components/Store';
 import UpdateModal from "../components/UpdateModal";
 import { Title } from '../components/Title';
 
 export default function ProfilePage({}){
-  const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
+  const cartItems = useSelector(state => state.cart.cartItems);
+  const userToken = useSelector(state => state.user.token);
 
   const [isPopupVisible, setPopupVisible] = useState(false);
 
@@ -20,7 +22,8 @@ export default function ProfilePage({}){
     togglePopup();
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
+    await dispatch(saveCart({ token: userToken, cartItems }))
     dispatch(signOut());
   };
 

@@ -35,48 +35,12 @@ function ItemDetails({ route, navigation }) {
     try {
       //console.log('Item to add:', item);
       dispatch(addToCart(item));
-      const updatedCartItems = [...cartItems, { ...item, quantity: 1}];
+      //const updatedCartItems = [...cartItems, { ...item, quantity: 1}];
       //console.log('Updated cart items:', updatedCartItems);
-      await dispatch(saveCart({ token: userToken, cartItems: updatedCartItems }));
+      //await dispatch(saveCart({ token: userToken, cartItems: updatedCartItems }));
     } catch (error) {
       console.log('Error while adding item', error);
     }
-    
-    /*try {
-      //console.log("Item:", item);
-      const requestBody = {
-        items: [
-          {
-            id: item.id,
-            price: item.price,
-            count: 1,
-          }
-        ]
-      };
-      //console.log("Request Body:", requestBody);
-    
-      const response = await fetch('http://192.168.0.149:3000/cart', {
-        method: 'PUT', 
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${userToken}`,
-        },
-        body: JSON.stringify(requestBody),
-      });
-    
-      const responseData = await response.json();
-      //console.log('Response', responseData);
-      if (response.ok) {
-        //console.log("Items added to the cart successfully")
-        dispatch(addToCart(item));
-        //console.log(`${item.title} has been added to the cart.`);
-      } else {
-        console.log('Failed to add items to the cart:', responseData.error);
-      }
-    } catch (error) {
-      console.error('Error while adding items to the cart:', error);
-    }*/
   };
   
   return (
