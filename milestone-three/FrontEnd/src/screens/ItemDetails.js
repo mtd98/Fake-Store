@@ -33,10 +33,10 @@ function ItemDetails({ route, navigation }) {
 
   const handleAddToCart = async () => {
     try {
-      console.log('Item to add:', item);
+      //console.log('Item to add:', item);
       dispatch(addToCart(item));
       const updatedCartItems = [...cartItems, { ...item, quantity: 1}];
-      console.log('Updated cart items:', updatedCartItems);
+      //console.log('Updated cart items:', updatedCartItems);
       await dispatch(saveCart({ token: userToken, cartItems: updatedCartItems }));
     } catch (error) {
       console.log('Error while adding item', error);

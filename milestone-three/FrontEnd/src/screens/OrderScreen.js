@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
 
+import { fetchOrders } from '../components/Store';
 import { IconButton } from "../components/IconButton";
 import CustomModal from "../components/Modal";
 
 const MyOrdersScreen = () => {
-  const [orders, setOrders] = useState([]);
+  const dispatch = useDispatch();
   const userToken = useSelector(state => state.user.token);
   const userId = useSelector(state => state.user.id);
+  const orders = useSelector(state => state.order.orders);
 
   const [expandedSections, setExpandedSections] = useState({
     newOrders: false,
@@ -16,13 +18,19 @@ const MyOrdersScreen = () => {
     deliveredOrders: false,
   });
   const [expandedItems, setExpandedItems] = useState({});
-  
   const [isPopupVisible, setPopupVisible] = useState(false);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    fetchOrders();
-  }, []);
+    //console.log("Fetching orders...");
+    if (userToken) {
+      dispatch(fetchOrders(userToken));
+    } 
+  }, [userToken, dispatch]);
+
+  useEffect(() => {
+    //console.log("Orders updated:", orders);
+  }, [orders]);
 
   const toggleSection = (section) => {
     setExpandedSections(prevState => ({
@@ -38,22 +46,6 @@ const MyOrdersScreen = () => {
     }));
   };
 
-  const fetchOrders = async () => {
-    try {
-      const response = await fetch('http://192.168.0.149:3000/orders/all', {
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ${userToken}`,
-        },
-      });
-      const responseData = await response.json();
-      //console.log(responseData);
-      setOrders(responseData.orders);
-    } catch (error) {
-      console.error('Error fetching orders:', error);
-    }
-  };
-
   const handleUpdate = async (orderId, isPaid, isDelivered) => {
     try {
       const response = await fetch('http://192.168.0.149:3000/orders/updateorder', {
@@ -67,7 +59,7 @@ const MyOrdersScreen = () => {
       });
       if (response.ok) {
         console.log("Updated order")
-        fetchOrders();
+        dispatch(fetchOrders(userToken));
         let message = '';
         if (isPaid && isDelivered) {
           message = 'Your order is delivered';
@@ -88,7 +80,7 @@ const MyOrdersScreen = () => {
 
   const renderOrderItem = ({ item }) => {
     const orderItems = JSON.parse(item.order_items);
-    const numberOfItems = orderItems.length;
+    const numberOfItems = orderItems.reduce((total, orderItem) => total + orderItem.quantity, 0);
     const totalPrice = orderItems.reduce((total, item) => total + (item.price * item.quantity), 0);
     
     if (item.uid === userId) {
@@ -123,15 +115,17 @@ const MyOrdersScreen = () => {
       </View>
       );
     } else {
-      return (
-        <Text>No Orders Found</Text>
-      );
+      return null;
     }
   };
 
-  const newOrders = orders.filter(order => !order.is_paid && !order.is_delivered);
-  const paidOrders = orders.filter(order => order.is_paid && !order.is_delivered);
-  const deliveredOrders = orders.filter(order => order.is_paid && order.is_delivered);
+  //console.log('Orders before filtering:', orders);
+  const newOrders = orders.filter((order) => order && !order.is_paid && !order.is_delivered);
+  const paidOrders = orders.filter((order) =>  order && order.is_paid && !order.is_delivered);
+  const deliveredOrders = orders.filter((order) =>  order && order.is_paid && order.is_delivered);
+  //console.log('New Orders:', newOrders);
+  //console.log('Paid Orders:', paidOrders);
+  //console.log('Delivered Orders:', deliveredOrders);
 
   return (
     <View style={styles.container}>

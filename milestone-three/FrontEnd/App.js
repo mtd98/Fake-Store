@@ -4,7 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Provider, useDispatch, useSelector } from "react-redux";
 
-import store, { fetchCart, setCart } from './src/components/Store';
+import store, { fetchCart, fetchOrders, setCart } from './src/components/Store';
 import { Icon } from './src/components/Icon';
 import CustomModal from "./src/components/Modal";
 
@@ -48,6 +48,9 @@ const MyTabNavigator = () => {
   const [selectedTab, setSelectedTab ] = useState('SignInScreen');
  
   useEffect(() => {
+    if (isLoggedIn && userToken) {
+      dispatch(fetchOrders(userToken));
+    };
     const loadCart = async () => {
       if (isLoggedIn){
         try {
@@ -59,7 +62,7 @@ const MyTabNavigator = () => {
       }
     };
     loadCart();
-  }, [isLoggedIn]);
+  }, [isLoggedIn, userToken]);
   
   return ( 
     <> 

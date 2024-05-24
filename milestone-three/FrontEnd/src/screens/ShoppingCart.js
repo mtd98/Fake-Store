@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, FlatList, Button, Image, Dimensions, Platform }
 import { useSelector, useDispatch } from 'react-redux';
 
 
-import { incrementQuantity, decrementQuantity, addOrder, clearCart, updateTotalNewOrders, saveCart } from '../components/Store';
+import { incrementQuantity, decrementQuantity, clearCart,  saveCart, addOrder, fetchOrders } from '../components/Store';
 import CustomModal from "../components/Modal";
 import { Title } from '../components/Title';
 import { backgroundColour, borderColour } from '../constants/Color';
@@ -15,6 +15,7 @@ function ShoppingCart () {
   const dispatch = useDispatch();
   const cartItems = useSelector(state => state.cart.cartItems);
   const userToken = useSelector(state => state.user.token);
+  const orders = useSelector(state => state.order.orders);
   const totalPrice = cartItems.reduce((total, item) => total + (item.price * Number(item.quantity)), 0);
   const totalItems = cartItems.reduce((total, item) => total + Number(item.quantity), 0);
 
@@ -27,16 +28,16 @@ function ShoppingCart () {
   };
 
   const handleIncrement = async (id) => {
-    console.log('Cart items before increment', cartItems);
+    //console.log('Cart items before increment', cartItems);
     await dispatch(incrementQuantity({ id }));
-    console.log('Cart items after increment:', cartItems);
+    //console.log('Cart items after increment:', cartItems);
     await dispatch(saveCart({ token: userToken, cartItems: cartItems }));
   };
 
   const handleDecrement = async (id) => {
-    console.log('Cart items before decrement:', cartItems);
+    //console.log('Cart items before decrement:', cartItems);
     await dispatch(decrementQuantity({ id }));
-    console.log('Cart items after decrement:', cartItems);
+    //console.log('Cart items after decrement:', cartItems);
     await dispatch(saveCart({ token: userToken, cartItems: cartItems }));
   };
 
@@ -62,10 +63,18 @@ function ShoppingCart () {
       //console.log('Response', responseData);
       if (responseData.status === 'OK') {
         //console.log("Order Created successful")
+
         dispatch(addOrder(responseData.order));
 
         dispatch(clearCart());
         //console.log("Cart after clearing:", cartItems);
+
+        dispatch(saveCart());
+        //console.log("Orders after checkout:", orders);
+        
+        dispatch(fetchOrders(userToken));
+        //console.log("Refetching orders");
+
         togglePopup("A new order has been created");
       } else {
         console.log('Creating Order failed:', responseData.message);

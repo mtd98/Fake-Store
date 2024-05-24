@@ -1,4 +1,53 @@
-import { configureStore, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { configureStore, createSlice, createAsyncThunk, getDefaultMiddleware } from '@reduxjs/toolkit';
+
+export const fetchCart = createAsyncThunk('cart/fetchCart', async (token) => {
+  const response = await fetch('http://192.168.0.149:3000/Cart', {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch cart');
+  }
+  const data = await response.json();
+  //console.log('Fetched cart data:', data);
+  return data;
+});
+
+export const saveCart = createAsyncThunk('cart/saveCart', async ({ token, cartItems }) => {
+  //console.log('Saving cart:', cartItems);
+  const response = await fetch('http://192.168.0.149:3000/Cart', {
+    method: 'PUT',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ items: cartItems }),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to save cart');
+  }
+  const data = await response.json();
+  //console.log("Saved cart data:", data);
+  return data;
+});
+
+export const fetchOrders = createAsyncThunk('orders/fetchOrders', async (token) => {
+  console.log("Fetch Orders called");
+  const response = await fetch('http://192.168.0.149:3000/orders/all', {
+    headers: {
+      Accept: 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const responseData = await response.json();
+  return responseData.orders;
+});
+
 
 const userSlice = createSlice({
   name: 'user',
@@ -39,11 +88,11 @@ const cartSlice = createSlice({
   },
   reducers: {
     setCart: (state, action) => {
-      console.log('Setting cart with items:', action.payload);
+      //console.log('Setting cart with items:', action.payload);
       state.cartItems = action.payload;
     },
     addToCart: (state, action) => {
-      console.log('Adding to cart:', action.payload);
+      //console.log('Adding to cart:', action.payload);
       const { id } = action.payload;
       const existingItem = state.cartItems.find(item => item.id === id);
       if (existingItem) {
@@ -72,13 +121,13 @@ const cartSlice = createSlice({
       }
     },
     clearCart: (state) => {
-      console.log('Clearing cart');
+      //console.log('Clearing cart');
       state.cartItems = [];
     },
   },
   extraReducers: (builder) => {
     builder.addCase(userSlice.actions.signOut, (state => {
-      console.log('Sign out - Clearing cart');
+      //console.log('Sign out - Clearing cart');
       state.cartItems = [];
     }));
   },
@@ -95,14 +144,29 @@ const orderSlice = createSlice({
   reducers: {
     addOrder: (state, action) => {
       state.orders.push(action.payload);
+      console.log("Add Order called");
     },
-    updateTotalNewOrders: (state, action) => {
-      state.totalNewOrders = action.payload;
+    setOrders: (state, action) => {
+      state.orders = action.payload;
+      state.totalNewOrders = action.payload.filter(order => !order.is_paid && !order.is_delivered).length;
+      console.log("Set Orders called");
     },
   },
+  extraReducers: (builder) => {
+    builder
+    .addCase(fetchOrders.fulfilled, (state, action) => {
+      state.orders = action.payload;
+      state.totalNewOrders = action.payload.filter(order => !order.is_paid && !order.is_delivered).length;
+    })
+    .addCase(userSlice.actions.signOut, (state) => {
+      console.log("Sign out - clearing orders");
+      state.orders = [];
+      state.totalNewOrders = 0;
+    })
+  }
 });
 
-export const { addOrder, updateTotalNewOrders } = orderSlice.actions;
+export const { addOrder, setOrders } = orderSlice.actions;
 
 const reducer = {
   user: userSlice.reducer,
@@ -112,42 +176,9 @@ const reducer = {
 
 const store = configureStore({
   reducer,
-});
-
-export const fetchCart = createAsyncThunk('cart/fetchCart', async (token) => {
-  const response = await fetch('http://192.168.0.149:3000/Cart', {
-    method: 'GET',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (!response.ok) {
-    throw new Error('Failed to fetch cart');
-  }
-  const data = await response.json();
-  console.log('Fetched cart data:', data);
-  return data;
-});
-
-export const saveCart = createAsyncThunk('cart/saveCart', async ({ token, cartItems }) => {
-  console.log('Saving cart:', cartItems);
-  const response = await fetch('http://192.168.0.149:3000/Cart', {
-    method: 'PUT',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ items: cartItems }),
-  });
-  if (!response.ok) {
-    throw new Error('Failed to save cart');
-  }
-  const data = await response.json();
-  console.log("Saved cart data:", data);
-  return data;
+  middleware: getDefaultMiddleware => getDefaultMiddleware({
+    thunk: true,
+  }),
 });
 
 export default store;
