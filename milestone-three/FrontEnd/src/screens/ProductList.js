@@ -12,7 +12,12 @@ const ProductAPIURL = 'https://fakestoreapi.com/products';
 const {width, height } = Dimensions.get("window");
 const isWeb = Platform.OS === 'web';
 
-const productCache = {};
+export let productCache = {};
+
+export const clearProductCache = async () => {
+  productCache = {};
+  await AsyncStorage.removeItem('products');
+};
 
 export default function ProductList({ route, navigation}) {
   const { category } = route.params;
@@ -23,7 +28,6 @@ export default function ProductList({ route, navigation}) {
   const fetchData = async () => {
     setLoading(true);
     try {
-      //console.log("Fetch from API")
       const getProduct = await fetch(ProductAPIURL);
       const productJSON = await getProduct.json();
       const filteredProducts = productJSON.filter(
@@ -42,7 +46,6 @@ export default function ProductList({ route, navigation}) {
   const loadDataFromCache = async () => {
     setLoading(true);
     try {
-      //console.log("Fetch from Cache")
       const cachedData = await AsyncStorage.getItem('products');
       const parsedCache = cachedData ? JSON.parse(cachedData) : {};
       Object.assign(productCache, parsedCache);

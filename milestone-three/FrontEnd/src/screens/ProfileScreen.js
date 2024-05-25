@@ -5,6 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { saveCart, signOut } from '../components/Store';
 import UpdateModal from "../components/UpdateModal";
 import { Title } from '../components/Title';
+import { clearCategoryCache } from './CategoryScreen';
+import { clearProductCache } from './ProductList';
+import { clearItemCache } from './ItemDetails';
+
 
 export default function ProfilePage({}){
   const dispatch = useDispatch();
@@ -23,7 +27,11 @@ export default function ProfilePage({}){
   };
 
   const handleSignOut = async () => {
-    await dispatch(saveCart({ token: userToken, cartItems }))
+    await dispatch(saveCart({ token: userToken, cartItems }));
+    await clearCategoryCache();
+    await clearProductCache();
+    await clearItemCache();
+    //console.log("Caches cleared on sign out");
     dispatch(signOut());
   };
 

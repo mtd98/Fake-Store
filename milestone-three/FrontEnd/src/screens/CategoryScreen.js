@@ -1,43 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React , {useState, useEffect } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect } from "@react-navigation/native";
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, Dimensions, Platform, ActivityIndicator} from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 
 import { Title } from '../components/Title';
 import { backgroundColour, borderColour, mainComponentColour, textColour } from '../constants/Color';
 
 const CategoryAPIURL = 'https://fakestoreapi.com/products/categories';
-
 const { width, height } = Dimensions.get('window');
 const isWeb = Platform.OS === 'web';
 
+export let categoryCache = {};
+
+export const clearCategoryCache = async () => {
+  categoryCache = {};
+  await AsyncStorage.removeItem('categories');
+};
+
 export default function Categories({ navigation }) {
-  const [loading, setLoading] = React.useState(true);
-  const [categories, setCategories] = React.useState('');
-  const [cachedCategories, setCachedCategories] = React.useState('');
+  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState('');
 
   const getData = React.useCallback(async () => {
     try {
-      if (cachedCategories !== '') {
-        //console.log("Using Cache");
-        try {
-          const cachedData = await AsyncStorage.getItem('categories');
-          const parsedCategories = JSON.parse(cachedData);
-          setCategories([...parsedCategories, "Mason Dunbar"]);
-          setLoading(false);
-        } catch  (error) {
-          console.log("Failed to get Cache", error);
-          setLoading(false);
-        }
+      if (categoryCache.length > 0) {
+        setCategories([...categoryCache, "Mason Dunbar"]);
+        setLoading(false);
       } else {
-        //console.log("Fetching Data");
         const getCategory = await fetch(CategoryAPIURL);
         const categoryJSON = await getCategory.json();
         setTimeout(async () => {
           await AsyncStorage.setItem('categories', JSON.stringify(categoryJSON));
           setCategories([...categoryJSON, "Mason Dunbar"]);
-          setCachedCategories([...categoryJSON, "Mason Dunbar"]);
+          categoryCache = [...categoryJSON, "Mason Dunbar"];
           setLoading(false);
         }, 2000);
       }
@@ -45,12 +41,16 @@ export default function Categories({ navigation }) {
       console.log("Failed to get Data", error)
       setLoading(false);
     }
-  }, [cachedCategories]);
+  }, []);
+
+  useEffect(() => {
+     getData();
+  }, []);
 
   useFocusEffect(
     React.useCallback(() => {
       getData();
-    }, [getData])
+    }, [])
   );
 
   const navToProductList = async (item) =>{
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   itemBox: {
     margin: 10,
     width: '90%',
-    height: "75%",
+    height: "70%",
     borderWidth: 2,
     borderColor: borderColour,
   },

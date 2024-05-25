@@ -12,7 +12,11 @@ import { backgroundColour } from '../constants/Color';
 const { width, height } = Dimensions.get('window');
 const isWeb = Platform.OS === 'web';
 
-const itemCache = {};
+export let itemCache = {};
+
+export const clearItemCache = async () => {
+  itemCache = {};
+};
 
 function ItemDetails({ route, navigation }) {
   const {item} = route.params;
