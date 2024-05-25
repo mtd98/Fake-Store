@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Image, Dimensions, Platform, ActivityIndicator, ScrollView} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import { addToCart, saveCart } from '../components/Store';
+import { addToCart } from '../components/Store';
 import { IconButton } from '../components/IconButton';
 import { Title } from '../components/Title';
 import { backgroundColour } from '../constants/Color';
@@ -12,21 +12,27 @@ import { backgroundColour } from '../constants/Color';
 const { width, height } = Dimensions.get('window');
 const isWeb = Platform.OS === 'web';
 
+const itemCache = {};
+
 function ItemDetails({ route, navigation }) {
   const {item} = route.params;
 
   const dispatch = useDispatch();
-  const userToken = useSelector(state => state.user.token);
-  const cartItems = useSelector(state => state.cart.cartItems);
-  
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    setTimeout(() => {
-      setData(item);
+    const cachedItem = itemCache[item.id];
+    if (cachedItem) {
+      setData(cachedItem);
       setLoading(false);
-    }, 1000);
+    } else {
+      setTimeout(() => {
+        itemCache[item.id] = item;
+        setData(item);
+        setLoading(false);
+      }, 2000);
+    }
   }, [item]);
 
   const navGoBack = () => navigation.goBack();
