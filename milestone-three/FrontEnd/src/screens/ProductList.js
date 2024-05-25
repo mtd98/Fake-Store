@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect } from "@react-navigation/native";
@@ -9,16 +9,16 @@ import { IconButton } from '../components/IconButton';
 import { backgroundColour, borderColour, mainComponentColour, secondaryTextColour } from '../constants/Color';
 
 const ProductAPIURL = 'https://fakestoreapi.com/products';
-
 const {width, height } = Dimensions.get("window");
 const isWeb = Platform.OS === 'web';
+
+const productCache = {};
 
 export default function ProductList({ route, navigation}) {
   const { category } = route.params;
 
-  const [loading, setLoading] = React.useState(true);
-  const [products, setProducts] = React.useState([]);
-  const [cachedProducts, setCachedProducts] = React.useState([]);
+  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState([]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -29,9 +29,9 @@ export default function ProductList({ route, navigation}) {
       const filteredProducts = productJSON.filter(
         (product) => product.category === category
       );
+      productCache[category] = filteredProducts;
       setProducts([...filteredProducts]);
-      await AsyncStorage.setItem('products', JSON.stringify(filteredProducts));
-      setCachedProducts([...filteredProducts]);
+      await AsyncStorage.setItem('products', JSON.stringify(productCache));
     } catch (error) {
       console.log("Failed to fetch data", error);
     } finally {
@@ -44,29 +44,32 @@ export default function ProductList({ route, navigation}) {
     try {
       //console.log("Fetch from Cache")
       const cachedData = await AsyncStorage.getItem('products');
-      if (cachedData) {
-        const parsedProducts = JSON.parse(cachedData);
-        setProducts([...parsedProducts]);
-        setCachedProducts([...parsedProducts]);
+      const parsedCache = cachedData ? JSON.parse(cachedData) : {};
+      Object.assign(productCache, parsedCache);
+
+      if (productCache[category]) {
+        setProducts(productCache[category]);
+        setLoading(false);
       } else {
         await fetchData();
       }
     } catch (error) {
       console.log("Failed to get data from cache", error);
-    } finally {
       setLoading(false);
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     loadDataFromCache();
-  }, []);
+  }, [category]);
 
-  useFocusEffect(() => {
-    if (category !== cachedProducts[0]?.category) {
-      fetchData();
-    }
-  });
+  useFocusEffect(
+    React.useCallback(() => {
+      if (!productCache[category]) {
+        fetchData();
+      }
+    }, [category])
+  );
 
   const navGoBack = () => navigation.goBack();
   
