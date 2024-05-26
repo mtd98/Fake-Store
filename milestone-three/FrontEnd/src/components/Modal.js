@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Button } from 'react-native';
 import Modal from 'react-native-modal';
 
+import { mainComponentColour, secondaryTextColour } from '../constants/Color';
 const CustomModal = ({ isVisible, onClose, message }) => {
   return (
     <Modal isVisible={isVisible} onClose={onClose}>
@@ -21,16 +22,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modal: {
-    width: 300,
     padding: 20,
-    backgroundColor: 'white',
+    backgroundColor: mainComponentColour,
     borderRadius: 10,
-    alignItems: 'center',
+    elevation: 5,
   },
   message: {
     marginBottom: 20,
-    fontSize: 18,
+    fontWeight: 'bold',
     textAlign: 'center',
+    color: secondaryTextColour,
   },
 });
 

@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, Dimensions, Platform } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 
+import { backgroundColour, buttonColour, mainComponentColour, textColour, secondaryTextColour, borderColour } from '../constants/Color';
 import { fetchOrders } from '../components/Store';
 import { IconButton } from "../components/IconButton";
 import CustomModal from "../components/Modal";
+
+const { width } = Dimensions.get("window");
+const isWeb = Platform.OS === 'web';
 
 const MyOrdersScreen = () => {
   const dispatch = useDispatch();
@@ -86,20 +91,24 @@ const MyOrdersScreen = () => {
     if (item.uid === userId) {
       return (
       <View style={styles.orderItemContainer}>
-        <View>
-          <Text style={styles.orderItemTitle}>{`Order ID: ${item.id}`}</Text>
-          <Text>{`Number of Items: ${numberOfItems}`}</Text>
-          <Text>{`Total Price: $${totalPrice}`}</Text>
-          <IconButton name="expand" fun={() => toggleExpand(item.id)}/>
-          {!item.is_paid && !item.is_delivered && (
-            <IconButton name="cash-outline" fun={() => handleUpdate(item.id, true, false)} />
-          )}
-          {item.is_paid && !item.is_delivered && (
-            <IconButton name="checkmark-done-outline" fun={() => handleUpdate(item.id, true, true)} />
-          )}
+        <View style={styles.orderItemHeader}>
+          <View style={styles.orderDetails}>
+            <Text style={styles.orderItemTitle}>{`Order ID: ${item.id}`}</Text>
+            <Text>{`Number of Items: ${numberOfItems}`}</Text>
+            <Text>{`Total Price: $${totalPrice.toFixed(2)}`}</Text>
+          </View>
+          <View style={styles.orderActions}>
+            <IconButton name="expand" fun={() => toggleExpand(item.id)}/>
+            {!item.is_paid && !item.is_delivered && (
+              <IconButton name="cash-outline" text="Pay" fun={() => handleUpdate(item.id, true, false)} />
+            )}
+            {item.is_paid && !item.is_delivered && (
+              <IconButton name="checkmark-done-outline" text="Receive" fun={() => handleUpdate(item.id, true, true)} />
+            )}
+          </View>
         </View>
         {expandedItems[item.id] && (
-          <View>
+          <View style={styles.orderDetailsExpanded}>
            {orderItems.map((orderItem, index) => (
               <View key={index} style={styles.itemContainer}>
                 <Image style={styles.itemImage} source={{uri: orderItem.image}} />
@@ -119,13 +128,9 @@ const MyOrdersScreen = () => {
     }
   };
 
-  //console.log('Orders before filtering:', orders);
   const newOrders = orders.filter((order) => order && !order.is_paid && !order.is_delivered);
   const paidOrders = orders.filter((order) =>  order && order.is_paid && !order.is_delivered);
   const deliveredOrders = orders.filter((order) =>  order && order.is_paid && order.is_delivered);
-  //console.log('New Orders:', newOrders);
-  //console.log('Paid Orders:', paidOrders);
-  //console.log('Delivered Orders:', deliveredOrders);
 
   return (
     <View style={styles.container}>
@@ -133,7 +138,7 @@ const MyOrdersScreen = () => {
       <Text style={styles.screenTitle}>My Orders</Text>
 
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>New Orders</Text>
+        <Text style={styles.sectionTitle}>New Orders ({newOrders.length})</Text>
         <IconButton name={expandedSections.newOrders ? "chevron-up-outline" : "chevron-down-outline"} fun={() => toggleSection('newOrders')}/>
       </View>
       {expandedSections.newOrders && (
@@ -141,7 +146,7 @@ const MyOrdersScreen = () => {
       )}
 
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Paid Orders</Text>
+        <Text style={styles.sectionTitle}>Paid Orders ({paidOrders.length})</Text>
         <IconButton name={expandedSections.paidOrders ? "chevron-up-outline" : "chevron-down-outline"} fun={() => toggleSection('paidOrders')}/>
       </View>
       {expandedSections.paidOrders && (
@@ -149,7 +154,7 @@ const MyOrdersScreen = () => {
       )}
 
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Delivered Orders</Text>
+        <Text style={styles.sectionTitle}>Delivered Orders ({deliveredOrders.length})</Text>
         <IconButton name={expandedSections.deliveredOrders ? "chevron-up-outline" : "chevron-down-outline"} fun={() => toggleSection('deliveredOrders')}/>
       </View>
       {expandedSections.deliveredOrders && (
@@ -163,47 +168,77 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: backgroundColour,
   },
   screenTitle: {
-    fontSize: 20,
+    fontSize: isWeb ? 34 : width * 0.07,
     fontWeight: 'bold',
-    marginBottom: 10,
+    color: textColour,
+    marginBottom: 20,
+    textAlign: 'center',
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 16,
+    backgroundColor: mainComponentColour,
+    padding: 10,
+    borderRadius: 10,
+    marginVertical: 5,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: isWeb ? 28 : width * 0.05,
     fontWeight: 'bold',
-    marginTop: 20,
+    color: textColour,
   },
   orderItemContainer: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#fff',
     padding: 10,
-    marginBottom: 10,
     borderRadius: 8,
+    marginBottom: 10,
+    borderColor: borderColour,
+    borderWidth: 1,
+  },
+  orderItemHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  orderDetails: {
+    flex: 1,
+  },
+  orderActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   orderItemTitle: {
-    fontSize: 16,
+    fontSize: isWeb ? 24 : width * 0.045,
     fontWeight: 'bold',
+    color: secondaryTextColour,
   },
-  orderItemStatus: {
-    fontSize: 14,
-    marginBottom: 5,
+  orderDetailsExpanded: {
+    marginTop: 10,
   },
-  orderItemTotal: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginTop: 5,
-  },
-  image: {
-    width: 100,
-    aspectRatio: 1,
-    marginRight: 10,
+  itemContainer: {
+    flexDirection: 'row',
+    marginBottom: 10,
+    padding: 10,
     borderRadius: 5,
+    backgroundColor: '#f9f9f9',
+  },
+  itemImage: {
+    width: isWeb ? 100 : width * 0.2,
+    height: isWeb ? 100 : width * 0.2,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  itemDetails: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: textColour,
+    fontSize: isWeb ? 18 : width * 0.04,
+    fontWeight: 'bold',
   },
 });
 

@@ -1,10 +1,15 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, Dimensions} from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 
+import { backgroundColour, buttonColour, mainComponentColour, textColour, secondaryTextColour, borderColour } from '../constants/Color';
 import { signInSuccess } from '../components/Store';
 import CustomModal from "../components/Modal";
 import { Title } from '../components/Title';
+
+const { width } = Dimensions.get("window");
+const isWeb = Platform.OS === 'web';
 
 export default function SignupPage({ navigation }){
   const [username, setUsername] = useState('');
@@ -106,6 +111,7 @@ export default function SignupPage({ navigation }){
       <TouchableOpacity style={styles.switchButton} onPress={navToLogin}>
         <Text style={styles.switchButtonText}>Switch To: Sign In</Text>
       </TouchableOpacity>
+      <StatusBar style='auto'/>
     </View>
   );
 };
@@ -115,26 +121,22 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: backgroundColour,
     paddingHorizontal: 20,
   },
   formContainer: {
-    backgroundColor: 'white',
+    backgroundColor: mainComponentColour,
     padding: 20,
     borderRadius: 10,
     elevation: 5,
-    marginBottom: 20,
-    width: '100%',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+    width: isWeb ? '40%' : '90%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   input: {
     width: '100%',
     height: 40,
-    borderColor: 'gray',
+    borderColor: borderColour,
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
@@ -143,29 +145,31 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    width: '100%',
   },
   button: {
     flex: 1,
     height: 40,
-    backgroundColor: 'blue',
+    backgroundColor: buttonColour,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
-    marginBottom: 10,
+    marginHorizontal: 5,
   },
   clearButton: {
-    marginRight: 10,
-    backgroundColor: 'gray',
+    backgroundColor: borderColour,
   },
   buttonText: {
-    color: 'white',
-    fontSize: 16,
+    color: textColour,
+    fontSize: isWeb ? 18 : width * 0.04,
+    fontWeight: 'bold',
   },
   switchButton: {
-    marginBottom: 10,
+    marginTop: 10,
   },
   switchButtonText: {
-    color: 'blue',
-    fontSize: 16,
+    color: secondaryTextColour,
+    fontSize: isWeb ? 18 : width * 0.04,
+    fontWeight: 'bold',
   },
 });

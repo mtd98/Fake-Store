@@ -1,14 +1,19 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Platform } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 
 import { saveCart, signOut } from '../components/Store';
 import UpdateModal from "../components/UpdateModal";
 import { Title } from '../components/Title';
+import { backgroundColour, borderColour, buttonColour, mainComponentColour, textColour, secondaryTextColour } from '../constants/Color';
 import { clearCategoryCache } from './CategoryScreen';
 import { clearProductCache } from './ProductList';
 import { clearItemCache } from './ItemDetails';
 
+const { width } = Dimensions.get('window');
+const isWeb = Platform.OS === 'web';
 
 export default function ProfilePage({}){
   const dispatch = useDispatch();
@@ -49,41 +54,43 @@ export default function ProfilePage({}){
           <Text style={styles.text}>{user.email}</Text>
         </View>
         <View style={styles.buttonContainer}>
-          <Button title="Update" onPress={handleUpdate} style={styles.button} />
+          <TouchableOpacity style={styles.button} onPress={handleUpdate}>
+            <Text style={styles.buttonText}>Update</Text>
+          </TouchableOpacity>
           <View style={styles.buttonSpace} />
-          <Button title="Sign Out" onPress={handleSignOut} style={[styles.button, styles.signOut]} />
+          <TouchableOpacity style={[styles.button, styles.signOut]} onPress={handleSignOut}>
+            <Text style={styles.buttonText}>Sign Out</Text>
+          </TouchableOpacity>
         </View>
       </View>
+      <StatusBar style="auto" />
     </View>
   );
 };
-
-
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: backgroundColour,
     paddingHorizontal: 20,
   },
   formContainer: {
-    backgroundColor: 'white',
+    backgroundColor: mainComponentColour,
     padding: 20,
     borderRadius: 10,
     elevation: 5,
-    marginBottom: 20,
-    width: '100%',
+    width: isWeb ? '50%' : '90%',
     justifyContent: 'center',
     alignItems: 'center',
   },
   userInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '40%',
+    width: '100%',
     height: 40,
-    borderColor: 'gray',
+    borderColor: borderColour,
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
@@ -92,34 +99,34 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: 'bold',
     marginRight: 5,
-    color: '#333',
+    color: secondaryTextColour,
   },
   text: {
     flex: 1,
-    color: '#666',
+    color: borderColour
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    width: '100%',
   },
   button: {
     flex: 1,
     height: 40,
-    backgroundColor: 'blue',
+    backgroundColor: buttonColour,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
     paddingHorizontal: 10,
     marginHorizontal: 10,
-    marginBottom: 10,
   },
   signOut: {
-    marginRight: 10,
-    backgroundColor: 'gray',
+    backgroundColor: borderColour,
   },
   buttonText: {
-    color: 'white',
-    fontSize: 16,
+    color: textColour,
+    fontSize: isWeb ? 18 : width * 0.04,
+    fontWeight: 'bold',
   },
   buttonSpace: {
     width: 10,

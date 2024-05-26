@@ -1,15 +1,15 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect } from "@react-navigation/native";
 import { StyleSheet, View, Text, FlatList, Image, TouchableOpacity, Dimensions, Platform, ActivityIndicator } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 
 import { Title } from '../components/Title';
 import { IconButton } from '../components/IconButton';
-import { backgroundColour, borderColour, mainComponentColour, secondaryTextColour } from '../constants/Color';
+import { backgroundColour, borderColour, mainComponentColour, secondaryTextColour, buttonColour } from '../constants/Color';
 
 const ProductAPIURL = 'https://fakestoreapi.com/products';
-const {width, height } = Dimensions.get("window");
+const {width } = Dimensions.get("window");
 const isWeb = Platform.OS === 'web';
 
 export let productCache = {};
@@ -21,7 +21,6 @@ export const clearProductCache = async () => {
 
 export default function ProductList({ route, navigation}) {
   const { category } = route.params;
-
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
 
@@ -49,7 +48,6 @@ export default function ProductList({ route, navigation}) {
       const cachedData = await AsyncStorage.getItem('products');
       const parsedCache = cachedData ? JSON.parse(cachedData) : {};
       Object.assign(productCache, parsedCache);
-
       if (productCache[category]) {
         setProducts(productCache[category]);
         setLoading(false);
@@ -104,7 +102,7 @@ export default function ProductList({ route, navigation}) {
       <Title text={capitalizedCategory}/>
       <View style={styles.itemBox}>
         {loading ? (
-          <ActivityIndicator size="large" color="#0000ff"/>
+          <ActivityIndicator size="large" color={buttonColour}/>
         ) : (
           <FlatList data={products} renderItem={renderItem} keyExtractor={(item) => item.id.toString()}/>
         )}

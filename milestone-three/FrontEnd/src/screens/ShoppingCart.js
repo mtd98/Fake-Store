@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, Button, Image, Dimensions, Platform } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
+import { StyleSheet, Text, View, FlatList, Button, Image, Dimensions, Platform, TouchableOpacity } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 
 import { incrementQuantity, decrementQuantity, clearCart,  saveCart, fetchCart, addOrder, fetchOrders } from '../components/Store';
 import CustomModal from "../components/Modal";
 import { Title } from '../components/Title';
-import { backgroundColour, borderColour } from '../constants/Color';
+import { backgroundColour, borderColour, buttonColour, mainComponentColour, textColour, secondaryTextColour } from '../constants/Color';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const isWeb = Platform.OS === 'web';
 
 function ShoppingCart () {
   const dispatch = useDispatch();
   const cartItems = useSelector(state => state.cart.cartItems);
   const userToken = useSelector(state => state.user.token);
-  //const orders = useSelector(state => state.order.orders);
   const totalPrice = cartItems.reduce((total, item) => total + (item.price * Number(item.quantity)), 0);
   const totalItems = cartItems.reduce((total, item) => total + Number(item.quantity), 0);
 
@@ -48,13 +48,10 @@ function ShoppingCart () {
   };
 
   const handleCheckout = async () => {
-    //console.log("Handle checkout function called");
     try {
       const requestBody = {
         items: cartItems
       };
-      //console.log("Request Body:", requestBody);
-
       const response = await fetch('http://192.168.0.149:3000/orders/neworder', {
         method: 'POST',
         headers: {
@@ -64,19 +61,13 @@ function ShoppingCart () {
         },
         body: JSON.stringify(requestBody),
       });
-  
       const responseData = await response.json();
-      //console.log('Response', responseData);
       if (responseData.status === 'OK') {
         dispatch(addOrder(responseData.order));
         dispatch(clearCart());
         dispatch(saveCart({ token: userToken, cartItems: []}));
         dispatch(fetchOrders(userToken));
         togglePopup("A new order has been created");
-        //console.log("Order Created successful")
-        //console.log("Orders after checkout:", orders);
-        //console.log("Cart after clearing:", cartItems);
-        //console.log("Refetching orders");
       } else {
         console.log('Creating Order failed:', responseData.message);
         togglePopup(responseData.message);
@@ -89,7 +80,7 @@ function ShoppingCart () {
 
   const renderItem = ({ item }) => (
     <View style={styles.listContainer}>
-      <Image style={styles.image} source={{uri: item.image,}}/>
+      <Image style={styles.image} source={{uri: item.image}}/>
       <View style={styles.itemDetails}>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.price}>Price: ${item.price}</Text>
@@ -112,7 +103,7 @@ function ShoppingCart () {
         {cartItems.length === 0 ? (
           <Text style={styles.emptyText}>Your Cart is Empty</Text>
         ):(
-          <View>
+          <View style={styles.contentContainer}>
             <View style={styles.itemContainer}>
               <Text style={styles.cartHeaderText}>Cart Total Price: ${totalPrice.toFixed(2)}</Text>
               <Text style={styles.cartHeaderText}>Item Total:{totalItems}</Text>
@@ -122,7 +113,9 @@ function ShoppingCart () {
                 keyExtractor={(item, index) => index.toString()}
               />
             </View>
-            <Button title="Check Out" onPress={handleCheckout}/>
+            <TouchableOpacity style={styles.checkoutButton} onPress={handleCheckout}>
+              <Text style={styles.checkoutButtonText}>Check Out</Text>
+            </TouchableOpacity>
           </View>
         )}
       </View>
@@ -133,16 +126,24 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: backgroundColour,
-    paddingTop: 40,
+    paddingTop: Platform.OS === 'ios' ? 40 : 20,
     alignItems: "center",
-  },
+  },  
   itemContainer: {
+    flex: 1,
     margin: 10,
-    height: '75%',
     width: '90%',
     borderWidth: 2,
     borderColor: borderColour,
     padding: 10,
+    backgroundColor: mainComponentColour,
+    borderRadius: 10,
+  },
+  contentContainer: {
+    flex: 1,
+    width: '90%',
+    maxHeight: '80%',
+    alignItems: 'center',
   },
   emptyText: {
     textAlign: 'center',
@@ -162,6 +163,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
+    borderColor: borderColour,
+    borderWidth: 1,
+    width: '100%',
   },
   image: {
     width: isWeb ? 170 : width * 0.15,
@@ -173,12 +177,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: isWeb ? 34 : width * 0.035,
+    fontSize: isWeb ? 30 : width * 0.035,
     fontWeight: 'bold',
+    color: secondaryTextColour,
   },
   price: {
     fontSize: isWeb ? 25 : width * 0.035,
-    color: '#888',
   },
   quantityContainer: {
     flexDirection: 'row',
@@ -195,6 +199,18 @@ const styles = StyleSheet.create({
   },
   buttonSpace: {
     width: 10,
+  },
+  checkoutButton: {
+    backgroundColor: buttonColour,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+  },
+  checkoutButtonText: {
+    fontSize: isWeb ? 25 : width * 0.05,
+    color: textColour,
+    fontWeight: 'bold',
+    textAlign: 'center',
   }
 });
 

@@ -1,14 +1,15 @@
-import React , {useState, useEffect } from 'react';
+import React, {useState, useEffect } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
+
 import { StyleSheet, Text, View, FlatList, TouchableOpacity, Dimensions, Platform, ActivityIndicator} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 import { Title } from '../components/Title';
-import { backgroundColour, borderColour, mainComponentColour, textColour } from '../constants/Color';
+import { backgroundColour, borderColour, mainComponentColour, textColour, buttonColour } from '../constants/Color';
 
 const CategoryAPIURL = 'https://fakestoreapi.com/products/categories';
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const isWeb = Platform.OS === 'web';
 
 export let categoryCache = {};
@@ -33,7 +34,7 @@ export default function Categories({ navigation }) {
         setTimeout(async () => {
           await AsyncStorage.setItem('categories', JSON.stringify(categoryJSON));
           setCategories([...categoryJSON, "Mason Dunbar"]);
-          categoryCache = [...categoryJSON, "Mason Dunbar"];
+          categoryCache = [...categoryJSON];
           setLoading(false);
         }, 2000);
       }
@@ -87,7 +88,7 @@ export default function Categories({ navigation }) {
       <Title text={"Product Categories"}/>
       <View style={styles.itemBox}>
         {loading ? ( 
-          <ActivityIndicator size="large" color="#0000ff"/>
+          <ActivityIndicator size="large" color={buttonColour}/>
         ) : (
           <FlatList data={categories} renderItem={renderItem} keyExtractor={(item, index) => index.toString()}/>
         )}

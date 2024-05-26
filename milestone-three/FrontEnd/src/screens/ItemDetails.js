@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+
 import { StyleSheet, View, Text, Image, Dimensions, Platform, ActivityIndicator, ScrollView} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { useDispatch } from 'react-redux';
-import Ionicons from "@expo/vector-icons/Ionicons";
 
+import { Title } from '../components/Title';
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { addToCart } from '../components/Store';
 import { IconButton } from '../components/IconButton';
-import { Title } from '../components/Title';
-import { backgroundColour } from '../constants/Color';
+import { backgroundColour, buttonColour, secondaryTextColour, textColour, borderColour } from '../constants/Color';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const isWeb = Platform.OS === 'web';
 
 export let itemCache = {};
@@ -20,7 +21,6 @@ export const clearItemCache = async () => {
 
 function ItemDetails({ route, navigation }) {
   const {item} = route.params;
-
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
@@ -43,11 +43,7 @@ function ItemDetails({ route, navigation }) {
 
   const handleAddToCart = async () => {
     try {
-      //console.log('Item to add:', item);
       dispatch(addToCart(item));
-      //const updatedCartItems = [...cartItems, { ...item, quantity: 1}];
-      //console.log('Updated cart items:', updatedCartItems);
-      //await dispatch(saveCart({ token: userToken, cartItems: updatedCartItems }));
     } catch (error) {
       console.log('Error while adding item', error);
     }
@@ -57,17 +53,17 @@ function ItemDetails({ route, navigation }) {
     <View style={styles.container}>
       <Title text={"Product Details"}/>
       {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color={buttonColour} />
       ) : ( 
       <View style={styles.itemContainer}>
         <Image style={styles.image} source={{uri: item.image,}}/>
         <Text style={styles.title}>{item.title}</Text>
         <View style={styles.ratingContainer}>
-          <Ionicons name="star-outline" color="yellow" size={20}/>  
+          <Ionicons name="star-outline" color="yellow"size={isWeb ? width * 0.020 : width * 0.04}/>  
           <Text style={styles.rating}>{item.rating.rate}</Text>
         </View>
         <View style={styles.ratingContainer}>
-          <Text>Sold: ({item.rating.count})</Text>
+          <Text style={styles.rating}>Sold: ({item.rating.count})</Text>
         </View>
         <Text style={styles.price}>Price: ${item.price}</Text>
         <View style={styles.descriptionContainer}>
@@ -105,42 +101,44 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   image: {
-    width: isWeb ? width * 0.17 : width * 0.5,
+    width: isWeb ? width * 0.35 : width * 0.5,
     aspectRatio: 1, 
     borderRadius: 10,
     marginBottom: 10,
   },
   title: {
-    fontSize: isWeb ? width * 0.02 : width * 0.05,
+    fontSize: isWeb ? width * 0.03 : width * 0.05,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 10,
+    color: secondaryTextColour,
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    //marginBottom: 10,
+    marginBottom: 5,
   },
   rating: {
-    fontSize: isWeb ? width * 0.01 : width * 0.06,
+    fontSize: isWeb ? width * 0.02 : width * 0.03,
     marginRight: 5,
+    color: textColour,
   },
   price: {
-    fontSize: isWeb ? width * 0.02 : width * 0.08,
+    fontSize: isWeb ? width * 0.03 : width * 0.08,
     fontWeight: 'bold',
-    //marginBottom: 10,
+    marginBottom: 10,
+    color: secondaryTextColour,
   },
   descriptionContainer: {
     maxHeight: 150,
     backgroundColor: "white",
-    borderColor:"black",
+    borderColor: borderColour,
     borderWidth: 1,
     padding: 10,
     marginTop: 20,
-    marginHorizontal: isWeb ? 150 : 10,
   },
   scrollView: {
-    //flexGrow: 1,
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -150,10 +148,10 @@ const styles = StyleSheet.create({
  
   },
   buttonContainer: {
-    //marginTop: 20,
+    marginTop: 20,
     flexDirection: "row",
+    justifyContent: "space-around",
   },
 });
 
 export default ItemDetails;
-//connect(null, { addToCart })(ItemDetails);
